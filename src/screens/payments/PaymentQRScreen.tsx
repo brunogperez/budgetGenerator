@@ -10,8 +10,8 @@ import {
   Alert,
   Share,
   Linking,
-  Clipboard,
 } from 'react-native';
+import * as ExpoClipboard from 'expo-clipboard';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -22,10 +22,9 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 
 // Services
 import * as paymentService from '../../services/paymentService';
-import * as quoteService from '../../services/quoteService';
 
 // Types
-import { Payment, Quote, PaymentStackParamList } from '../../types';
+import { Payment, Quote, QuoteStackParamList } from '../../types';
 
 // Constants
 import { COLORS, LAYOUT, TYPOGRAPHY } from '../../constants/config';
@@ -34,7 +33,7 @@ import { COLORS, LAYOUT, TYPOGRAPHY } from '../../constants/config';
 // TYPES
 // ===============================
 
-type PaymentQRScreenProps = StackScreenProps<PaymentStackParamList, 'PaymentQR'>;
+type PaymentQRScreenProps = StackScreenProps<QuoteStackParamList, 'PaymentQR'>;
 
 // ===============================
 // PAYMENT QR SCREEN
@@ -86,23 +85,20 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
       setError('');
       setIsLoading(true);
 
-      const [paymentData, quoteData] = await Promise.all([
-        paymentService.getPaymentById(paymentId),
-        paymentService.getQuoteByPaymentId(paymentId),
-      ]);
+      const result = await paymentService.getPaymentStatus(paymentId);
 
-      setPayment(paymentData);
-      setQuote(quoteData);
+      setPayment(result.payment);
+      setQuote(result.quote);
 
       // If payment is already completed, navigate to success
-      if (paymentData.status === 'approved') {
+      if (result.payment.status === 'approved') {
         navigation.replace('PaymentSuccess', {
-          paymentId: paymentData.id,
-          quoteId: quoteData?.id || '',
+          paymentId: result.payment.id,
+          quoteId: result.quote?.id || '',
         });
       }
     } catch (err: any) {
-      setError(err.message || 'Error cargando información de pago');
+      setError(err.message || 'Error cargando informacion de pago');
     } finally {
       setIsLoading(false);
     }
@@ -113,17 +109,18 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
 
     try {
       setIsCheckingStatus(true);
-      const updatedPayment = await paymentService.getPaymentStatus(payment.id);
-      setPayment(updatedPayment);
+      const result = await paymentService.getPaymentStatus(payment.id);
+      setPayment(result.payment);
+      setQuote(result.quote);
       setLastStatusCheck(new Date());
 
-      if (updatedPayment.status === 'approved') {
+      if (result.payment.status === 'approved') {
         // Payment completed successfully
         navigation.replace('PaymentSuccess', {
-          paymentId: updatedPayment.id,
-          quoteId: quote?.id || '',
+          paymentId: result.payment.id,
+          quoteId: result.quote?.id || '',
         });
-      } else if (updatedPayment.status === 'rejected' || updatedPayment.status === 'cancelled') {
+      } else if (result.payment.status === 'rejected' || result.payment.status === 'cancelled') {
         // Payment failed
         Alert.alert(
           'Pago Rechazado',
@@ -148,10 +145,10 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
   };
 
   const handleCopyQRData = async () => {
-    if (!payment?.qrData) return;
+    if (!payment?.qrCodeData) return;
 
     try {
-      await Clipboard.setString(payment.qrData);
+      await ExpoClipboard.setStringAsync(payment.qrCodeData);
       Alert.alert('Copiado', 'Datos del QR copiados al portapapeles');
     } catch (err: any) {
       console.error('Error copying QR data:', err);
@@ -162,11 +159,10 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
     if (!payment || !quote) return;
 
     try {
-      const shareContent = paymentService.generateShareablePayment(payment, quote);
+      const text = `Pago - ${quote.quoteNumber}\nMonto: $${payment.amount.toLocaleString('es-AR')}\nEstado: ${paymentService.formatPaymentStatus(payment.status).label}`;
       await Share.share({
-        message: shareContent.text,
+        message: text,
         title: `Pago - ${quote.quoteNumber}`,
-        url: shareContent.url,
       });
     } catch (err: any) {
       console.error('Error sharing payment:', err);
@@ -174,9 +170,9 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
   };
 
   const handleOpenMercadoPago = () => {
-    if (!payment?.paymentUrl) return;
+    if (!payment?.initPoint) return;
 
-    Linking.openURL(payment.paymentUrl).catch(() => {
+    Linking.openURL(payment.initPoint).catch(() => {
       Alert.alert('Error', 'No se pudo abrir MercadoPago');
     });
   };
@@ -188,14 +184,14 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
   const handleCancelPayment = () => {
     Alert.alert(
       'Cancelar Pago',
-      '¿Estás seguro que quieres cancelar este pago?',
+      'Estas seguro que quieres cancelar este pago?',
       [
         {
           text: 'No',
           style: 'cancel',
         },
         {
-          text: 'Sí, cancelar',
+          text: 'Si, cancelar',
           style: 'destructive',
           onPress: () => navigation.goBack(),
         },
@@ -208,7 +204,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
   // ===============================
 
   if (isLoading) {
-    return <Loading message="Cargando código QR..." />;
+    return <Loading message="Cargando codigo QR..." />;
   }
 
   // ===============================
@@ -258,7 +254,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
             marginBottom: LAYOUT.SPACING.SM,
             textAlign: 'center',
           }}>
-            💳 Código QR de Pago
+            Codigo QR de Pago
           </Text>
 
           <View style={{
@@ -295,21 +291,21 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
             borderWidth: 2,
             borderColor: COLORS.border,
           }}>
-            <Text style={{ fontSize: 48 }}>📱</Text>
+            <Text style={{ fontSize: 48 }}>QR</Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               color: COLORS.textSecondary,
               textAlign: 'center',
               marginTop: LAYOUT.SPACING.SM,
             }}>
-              Código QR
+              Codigo QR
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
               color: COLORS.textTertiary,
               textAlign: 'center',
             }}>
-              (Se mostraría aquí)
+              (Se mostraria aqui)
             </Text>
           </View>
 
@@ -320,7 +316,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
             textAlign: 'center',
             marginBottom: LAYOUT.SPACING.SM,
           }}>
-            Escaneá el código con MercadoPago
+            Escaneá el codigo con MercadoPago
           </Text>
 
           <Text style={{
@@ -329,7 +325,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
             textAlign: 'center',
             lineHeight: 22,
           }}>
-            Abrí la app de MercadoPago, tocá "Pagar con QR" y escaneá este código
+            Abrí la app de MercadoPago, tocá "Pagar con QR" y escaneá este codigo
           </Text>
         </View>
       </Card>
@@ -342,7 +338,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           color: COLORS.text,
           marginBottom: LAYOUT.SPACING.MD,
         }}>
-          📋 Detalles del Pago
+          Detalles del Pago
         </Text>
 
         <View style={{
@@ -434,12 +430,12 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
               color: COLORS.text,
             }}>
-              {isCheckingStatus ? 'Verificando...' : `Última verificación: ${formatTimeAgo(lastStatusCheck)}`}
+              {isCheckingStatus ? 'Verificando...' : `Ultima verificacion: ${formatTimeAgo(lastStatusCheck)}`}
             </Text>
           </View>
 
           <Button
-            title="🔄"
+            title="Actualizar"
             variant="ghost"
             size="sm"
             onPress={handleManualRefresh}
@@ -457,7 +453,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           color: COLORS.text,
           marginBottom: LAYOUT.SPACING.MD,
         }}>
-          💡 Instrucciones
+          Instrucciones
         </Text>
 
         <Text style={{
@@ -466,7 +462,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           lineHeight: 22,
           marginBottom: LAYOUT.SPACING.SM,
         }}>
-          1. Abrí la aplicación de MercadoPago
+          1. Abrí la aplicacion de MercadoPago
         </Text>
 
         <Text style={{
@@ -475,7 +471,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           lineHeight: 22,
           marginBottom: LAYOUT.SPACING.SM,
         }}>
-          2. Tocá "Pagar con QR" o el ícono de la cámara
+          2. Tocá "Pagar con QR" o el icono de la camara
         </Text>
 
         <Text style={{
@@ -484,7 +480,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           lineHeight: 22,
           marginBottom: LAYOUT.SPACING.SM,
         }}>
-          3. Escaneá este código QR
+          3. Escaneá este codigo QR
         </Text>
 
         <Text style={{
@@ -492,39 +488,39 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           color: COLORS.text,
           lineHeight: 22,
         }}>
-          4. Confirmá el pago en tu aplicación
+          4. Confirmá el pago en tu aplicacion
         </Text>
       </Card>
 
       {/* Actions */}
       <View style={{ gap: LAYOUT.SPACING.MD }}>
         {/* Open MercadoPago */}
-        {payment.paymentUrl && (
+        {payment.initPoint && (
           <Button
             title="Abrir en MercadoPago"
             onPress={handleOpenMercadoPago}
             fullWidth
-            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>🔗</Text>}
+            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>{'🔗'}</Text>}
           />
         )}
 
         {/* Share Payment */}
         <Button
-          title="Compartir Código"
+          title="Compartir Codigo"
           variant="outline"
           onPress={handleSharePayment}
           fullWidth
-          leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>📤</Text>}
+          leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>{'📤'}</Text>}
         />
 
         {/* Copy QR Data */}
-        {payment.qrData && (
+        {payment.qrCodeData && (
           <Button
             title="Copiar Datos QR"
             variant="outline"
             onPress={handleCopyQRData}
             fullWidth
-            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>📋</Text>}
+            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>{'📋'}</Text>}
           />
         )}
 
@@ -546,9 +542,9 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           textAlign: 'center',
           lineHeight: 18,
         }}>
-          Esta pantalla se actualiza automáticamente cada 10 segundos.
+          Esta pantalla se actualiza automaticamente cada 10 segundos.
           {'\n'}
-          Una vez confirmado el pago, serás redirigido automáticamente.
+          Una vez confirmado el pago, serás redirigido automaticamente.
         </Text>
       </View>
     </ScrollView>

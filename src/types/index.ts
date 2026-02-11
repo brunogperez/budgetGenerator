@@ -34,6 +34,7 @@ export interface Customer {
   name: string;
   email?: string;
   phone?: string;
+  address?: string;
 }
 
 export interface QuoteItem {
@@ -216,10 +217,10 @@ export type ProductStackParamList = {
 
 export type QuoteStackParamList = {
   QuoteList: undefined;
-  CreateQuote: undefined;
+  CreateQuote: { quoteId?: string } | undefined;
   QuoteDetail: { quoteId: string };
   PaymentQR: { paymentId: string };
-  PaymentSuccess: { quoteId: string };
+  PaymentSuccess: { paymentId: string; quoteId: string };
   CustomerForm: undefined;
 };
 

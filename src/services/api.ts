@@ -2,11 +2,13 @@
 // API CLIENT - PRESUPUESTOS APP
 // ===============================
 
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Constants from 'expo-constants';
 import { ApiResponse } from '../types';
 import { STORAGE_CONFIG, API_CONFIG, ERROR_CONFIG } from '../constants/config';
+
+declare const global: { navigationRef?: any };
 
 // ===============================
 // CONFIGURACIÓN BASE
@@ -32,15 +34,12 @@ const api: AxiosInstance = axios.create({
 // ===============================
 
 api.interceptors.request.use(
-  async (config: AxiosRequestConfig) => {
+  async (config: InternalAxiosRequestConfig) => {
     try {
       // Agregar token de autenticación si existe
       const token = await AsyncStorage.getItem(STORAGE_CONFIG.KEYS.AUTH_TOKEN);
       if (token) {
-        config.headers = {
-          ...config.headers,
-          Authorization: `Bearer ${token}`,
-        };
+        config.headers.set('Authorization', `Bearer ${token}`);
       }
 
       // Log de request en desarrollo

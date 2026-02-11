@@ -23,7 +23,7 @@ import { COLORS, LAYOUT, TYPOGRAPHY } from '../../constants/config';
 type InputVariant = 'default' | 'outline' | 'filled';
 type InputSize = 'sm' | 'md' | 'lg';
 
-interface InputProps extends Omit<TextInputProps, 'style'> {
+export interface InputProps extends Omit<TextInputProps, 'style'> {
   label?: string;
   error?: string;
   helperText?: string;
@@ -39,6 +39,7 @@ interface InputProps extends Omit<TextInputProps, 'style'> {
   labelStyle?: TextStyle;
   errorStyle?: TextStyle;
   helperStyle?: TextStyle;
+  style?: ViewStyle | TextStyle;
 }
 
 // ===============================

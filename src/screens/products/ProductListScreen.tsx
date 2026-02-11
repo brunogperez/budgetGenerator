@@ -118,7 +118,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
   };
 
   const handleAddProduct = () => {
-    navigation.navigate('ProductForm');
+    navigation.navigate('ProductForm' as any);
   };
 
   const canManageProducts = user?.role === 'admin' || user?.role === 'seller';

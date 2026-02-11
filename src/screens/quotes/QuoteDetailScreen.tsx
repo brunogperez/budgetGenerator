@@ -25,6 +25,7 @@ import { useAuth } from '../../context/AuthContext';
 // Services
 import * as quoteService from '../../services/quoteService';
 import * as paymentService from '../../services/paymentService';
+import * as productService from '../../services/productService';
 
 // Types
 import { Quote, QuoteItem, QuoteStackParamList } from '../../types';
@@ -93,7 +94,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
   const handleEditQuote = () => {
     if (!quote) return;
     // Navigate to edit (could be same CreateQuote screen with edit mode)
-    navigation.navigate('CreateQuote', { quoteId: quote.id });
+    navigation.navigate('CreateQuote', { quoteId: quote.id } as any);
   };
 
   const handleDeleteQuote = () => {
@@ -121,10 +122,10 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
     try {
       setIsDeleting(true);
-      await quoteService.deleteQuote(quote.id);
+      await quoteService.cancelQuote(quote.id);
       Alert.alert(
-        'Éxito',
-        'Presupuesto eliminado correctamente',
+        'Exito',
+        'Presupuesto cancelado correctamente',
         [
           {
             text: 'OK',
@@ -144,15 +145,10 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
     try {
       setIsGeneratingPayment(true);
-      const payment = await paymentService.createPayment({
-        quoteId: quote.id,
-        amount: quote.total,
-        description: `Pago de presupuesto ${quote.quoteNumber}`,
-        paymentMethod: 'qr',
-      });
+      const payment = await paymentService.createPayment(quote.id);
 
       // Navigate to QR screen
-      navigation.navigate('PaymentQR', { paymentId: payment.id });
+      navigation.navigate('PaymentQR', { paymentId: payment.paymentId });
     } catch (err: any) {
       Alert.alert('Error', err.message || 'Error generando pago');
     } finally {
@@ -164,9 +160,9 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
     if (!quote) return;
 
     try {
-      const shareContent = quoteService.generateShareableQuote(quote);
+      const text = `Presupuesto ${quote.quoteNumber}\nCliente: ${quote.customer.name}\nTotal: ${productService.formatPrice(quote.total)}\nEstado: ${quoteService.formatQuoteStatus(quote.status).label}`;
       await Share.share({
-        message: shareContent.text,
+        message: text,
         title: `Presupuesto ${quote.quoteNumber}`,
       });
     } catch (err: any) {
@@ -241,7 +237,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
           fontSize: TYPOGRAPHY.FONT_SIZE.SM,
           color: COLORS.textTertiary,
         }}>
-          {quoteService.formatPrice(item.unitPrice)} × {item.quantity}
+          {productService.formatPrice(item.productSnapshot.price)} x {item.quantity}
         </Text>
       </View>
 
@@ -250,7 +246,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
         fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
         color: COLORS.primary,
       }}>
-        {quoteService.formatPrice(item.subtotal)}
+        {productService.formatPrice(item.subtotal)}
       </Text>
     </View>
   );
@@ -315,13 +311,13 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
             })}
           </Text>
 
-          {quote.validUntil && (
+          {quote.expiresAt && (
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
               color: isExpired ? COLORS.error : isExpiringSoon ? COLORS.warning : COLORS.textTertiary,
-              fontWeight: (isExpired || isExpiringSoon) ? TYPOGRAPHY.FONT_WEIGHT.MEDIUM : TYPOGRAPHY.FONT_WEIGHT.NORMAL,
+              fontWeight: (isExpired || isExpiringSoon) ? TYPOGRAPHY.FONT_WEIGHT.MEDIUM : TYPOGRAPHY.FONT_WEIGHT.REGULAR,
             }}>
-              {isExpired ? '❌ Expirado' : `Válido hasta: ${new Date(quote.validUntil).toLocaleDateString('es-AR')}`}
+              {isExpired ? '❌ Expirado' : `Válido hasta: ${new Date(quote.expiresAt).toLocaleDateString('es-AR')}`}
               {isExpiringSoon && ` (${timeInfo.timeLeft})`}
             </Text>
           )}
@@ -469,7 +465,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
             color: COLORS.text,
           }}>
-            {quoteService.formatPrice(quote.subtotal)}
+            {productService.formatPrice(quote.subtotal)}
           </Text>
         </View>
 
@@ -490,7 +486,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               color: COLORS.success,
             }}>
-              -{quoteService.formatPrice(quote.discount)}
+              -{productService.formatPrice(quote.discount)}
             </Text>
           </View>
         )}
@@ -512,7 +508,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               color: COLORS.text,
             }}>
-              +{quoteService.formatPrice(quote.tax)}
+              +{productService.formatPrice(quote.tax)}
             </Text>
           </View>
         )}
@@ -537,7 +533,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
             color: COLORS.primary,
           }}>
-            {quoteService.formatPrice(quote.total)}
+            {productService.formatPrice(quote.total)}
           </Text>
         </View>
       </Card>

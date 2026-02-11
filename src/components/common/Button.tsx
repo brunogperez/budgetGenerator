@@ -177,9 +177,9 @@ const Button: React.FC<ButtonProps> = ({
   // HANDLERS
   // ===============================
 
-  const handlePress = () => {
+  const handlePress = (event: any) => {
     if (!disabled && !loading && onPress) {
-      onPress();
+      onPress(event);
     }
   };
 

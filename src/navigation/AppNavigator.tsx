@@ -84,7 +84,7 @@ const AppNavigator: React.FC = () => {
             name="Loading"
             component={LoadingScreen}
             options={{
-              animationEnabled: false,
+              animation: 'none',
             }}
           />
         ) : isAuthenticated ? (
@@ -93,7 +93,7 @@ const AppNavigator: React.FC = () => {
             name="Main"
             component={MainNavigator}
             options={{
-              animationEnabled: false,
+              animation: 'none',
             }}
           />
         ) : (
@@ -102,7 +102,7 @@ const AppNavigator: React.FC = () => {
             name="Auth"
             component={AuthNavigator}
             options={{
-              animationEnabled: false,
+              animation: 'none',
             }}
           />
         )}

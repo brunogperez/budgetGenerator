@@ -3,6 +3,7 @@
 // ===============================
 
 import Constants from 'expo-constants';
+export { COLORS } from './colors';
 
 // ===============================
 // CONFIGURACIÓN DE API

@@ -130,7 +130,7 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
     setFilteredProducts(filtered);
   };
 
-  const handleInputChange = (section: keyof QuoteFormData, field: string, value: string) => {
+  const handleInputChange = (section: keyof QuoteFormData | 'form', field: string, value: string) => {
     if (section === 'customer') {
       setFormData(prev => ({
         ...prev,

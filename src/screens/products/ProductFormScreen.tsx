@@ -144,8 +144,8 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
       price: parseFloat(formData.price) || 0,
       stock: parseInt(formData.stock) || 0,
       category: formData.category.trim(),
-      sku: formData.sku.trim() || undefined,
-      imageUrl: formData.imageUrl.trim() || undefined,
+      sku: formData.sku?.trim() || undefined,
+      imageUrl: formData.imageUrl?.trim() || undefined,
     };
 
     const validation = productService.validateProductData(productRequest);
@@ -168,8 +168,8 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
         category: formData.category.trim(),
-        sku: formData.sku.trim() || undefined,
-        imageUrl: formData.imageUrl.trim() || undefined,
+        sku: formData.sku?.trim() || undefined,
+        imageUrl: formData.imageUrl?.trim() || undefined,
       };
 
       let savedProduct: Product;

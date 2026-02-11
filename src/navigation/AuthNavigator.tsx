@@ -41,11 +41,7 @@ const AuthNavigator: React.FC = () => {
           fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
           color: COLORS.text,
         },
-        headerBackTitleVisible: false,
         headerTintColor: COLORS.primary,
-        cardStyle: {
-          backgroundColor: COLORS.background,
-        },
       }}
     >
       <Stack.Screen

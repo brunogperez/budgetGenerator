@@ -89,7 +89,7 @@ const ProductStackNavigator: React.FC = () => {
           title: 'Productos',
           headerRight: () => canManageProducts ? (
             <TouchableOpacity
-              onPress={() => navigation.navigate('ProductForm')}
+              onPress={() => navigation.navigate('ProductForm' as any)}
               style={{
                 marginRight: LAYOUT.SPACING.MD,
                 backgroundColor: COLORS.primary,
