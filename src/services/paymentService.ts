@@ -337,7 +337,7 @@ export const filterPayments = (
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
       const matchesSearch =
-        payment.id.toLowerCase().includes(searchTerm) ||
+        payment._id.toLowerCase().includes(searchTerm) ||
         payment.mercadopagoId?.toLowerCase().includes(searchTerm) ||
         payment.externalReference?.toLowerCase().includes(searchTerm);
 

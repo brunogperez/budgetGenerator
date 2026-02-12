@@ -10,7 +10,7 @@ export { COLORS } from './colors';
 // ===============================
 
 export const API_CONFIG = {
-  BASE_URL: Constants.expoConfig?.extra?.apiUrl || 'http://localhost:3000/api',
+  BASE_URL: Constants.expoConfig?.extra?.apiUrl || 'http://192.168.1.43:3000/api',
   TIMEOUT: 10000,
   RETRY_ATTEMPTS: 3,
   RETRY_DELAY: 1000,

@@ -183,7 +183,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
       }
 
       // Navigate to product detail
-      navigation.replace('ProductDetail', { productId: savedProduct.id });
+      navigation.replace('ProductDetail', { productId: savedProduct._id });
 
     } catch (err: any) {
       setError(err.message || 'Error guardando producto');

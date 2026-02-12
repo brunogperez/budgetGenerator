@@ -83,7 +83,9 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
         sortBy: 'name',
         sortOrder: 'asc',
       });
-      setProducts(response.products);
+      console.log('📦 Products loaded:', response.items?.length || 0, 'items');
+      console.log('📦 First product:', response.items?.[0]);
+      setProducts(response.items);
     } catch (err: any) {
       setError(err.message || 'Error cargando productos');
     } finally {
@@ -114,7 +116,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
   };
 
   const handleProductPress = (product: Product) => {
-    navigation.navigate('ProductDetail', { productId: product.id });
+    navigation.navigate('ProductDetail', { productId: product._id });
   };
 
   const handleAddProduct = () => {
@@ -324,20 +326,24 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
       {/* Products List */}
       <FlatList
         data={filteredProducts}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => {
+          console.log('🔑 ProductList keyExtractor called for:', item.name, '- _id:', item._id);
+          return item._id;
+        }}
         renderItem={renderProductCard}
         contentContainerStyle={{
           padding: LAYOUT.SPACING.LG,
           flexGrow: 1,
         }}
-        refreshControl={
-          <RefreshControl
-            refreshing={isRefreshing}
-            onRefresh={handleRefresh}
-            colors={[COLORS.primary]}
-            tintColor={COLORS.primary}
-          />
-        }
+        // Temporarily disabled to debug VirtualizedList warning
+        // refreshControl={
+        //   <RefreshControl
+        //     refreshing={isRefreshing}
+        //     onRefresh={handleRefresh}
+        //     colors={[COLORS.primary]}
+        //     tintColor={COLORS.primary}
+        //   />
+        // }
         ListEmptyComponent={renderEmptyState}
         showsVerticalScrollIndicator={false}
       />

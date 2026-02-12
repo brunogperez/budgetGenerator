@@ -80,6 +80,27 @@ export const createQuote = async (quoteData: CreateQuoteRequest): Promise<Quote>
 
     return response.data;
   } catch (error: any) {
+    console.log('🔍 Error detallado en createQuote:', error);
+    console.log('🔍 Error response:', error.response?.data);
+    console.log('🔍 Error status:', error.response?.status);
+    console.log('🔍 Error completo (JSON):', JSON.stringify(error, null, 2));
+
+    // Si el error ya viene procesado con los datos, usar esos
+    if (error.error?.details) {
+      console.log('🔍 Error details from processed error:', error.error.details);
+      const details = error.error.details;
+      const detailMessages = Array.isArray(details) ? details.map((d: any) => d.message || d).join(', ') : details;
+      throw new Error(`Error de validación: ${detailMessages}`);
+    }
+
+    // Si hay detalles de validación en response
+    if (error.response?.data?.error?.details) {
+      console.log('🔍 Validation details from response:', error.response.data.error.details);
+      const details = error.response.data.error.details;
+      const detailMessages = Array.isArray(details) ? details.map((d: any) => d.message || d).join(', ') : details;
+      throw new Error(`Error de validación: ${detailMessages}`);
+    }
+
     throw new Error(error.message || 'Error creando presupuesto');
   }
 };

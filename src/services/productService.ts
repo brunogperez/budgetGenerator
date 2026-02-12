@@ -179,7 +179,7 @@ export const searchProducts = async (
     };
 
     const result = await getProducts(searchFilters);
-    return result.products;
+    return result.items;
   } catch (error: any) {
     throw new Error(error.message || 'Error buscando productos');
   }

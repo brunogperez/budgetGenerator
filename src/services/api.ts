@@ -50,6 +50,11 @@ api.interceptors.request.use(
           data: config.data,
           headers: config.headers,
         });
+
+        // Log adicional para ver la data serializada
+        if (config.data) {
+          console.log('🔍 Request data serialized:', JSON.stringify(config.data, null, 2));
+        }
       }
 
       return config;
@@ -92,6 +97,11 @@ api.interceptors.response.use(
         message: error.message,
         data: error.response?.data,
       });
+
+      // Log adicional para debugging
+      if (error.response?.data?.error?.details) {
+        console.log('🔍 API Error Details:', error.response.data.error.details);
+      }
     }
 
     // Manejar token expirado (401)

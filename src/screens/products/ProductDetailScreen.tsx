@@ -89,7 +89,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
 
   const handleEditProduct = () => {
     if (!product) return;
-    navigation.navigate('ProductForm', { productId: product.id });
+    navigation.navigate('ProductForm', { productId: product._id });
   };
 
   const handleDeleteProduct = () => {
@@ -117,7 +117,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
 
     try {
       setIsDeleting(true);
-      await productService.deleteProduct(product.id);
+      await productService.deleteProduct(product._id);
       Alert.alert(
         'Éxito',
         'Producto eliminado correctamente',

@@ -119,7 +119,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
 
   const handleViewQuote = () => {
     if (!quote) return;
-    navigation.navigate('QuoteDetail', { quoteId: quote.id });
+    navigation.navigate('QuoteDetail', { quoteId: quote._id });
   };
 
   const handleCreateNewQuote = () => {
@@ -378,9 +378,9 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
             Productos Incluidos
           </Text>
 
-          {quote.items.slice(0, 3).map((item, index) => (
+          {quote.items?.slice(0, 3).map((item, index) => (
             <View
-              key={index}
+              key={item.product?._id || index}
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
@@ -414,7 +414,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
             </View>
           ))}
 
-          {quote.items.length > 3 && (
+          {(quote.items?.length || 0) > 3 && (
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
               color: COLORS.textTertiary,
@@ -422,7 +422,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
               textAlign: 'center',
               marginTop: LAYOUT.SPACING.SM,
             }}>
-              y {quote.items.length - 3} producto{quote.items.length - 3 !== 1 ? 's' : ''} mas...
+              y {(quote.items?.length || 0) - 3} producto{((quote.items?.length || 0) - 3) !== 1 ? 's' : ''} mas...
             </Text>
           )}
         </Card>

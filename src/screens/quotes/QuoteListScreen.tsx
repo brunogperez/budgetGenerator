@@ -83,7 +83,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
         sortBy: 'createdAt',
         sortOrder: 'desc',
       });
-      setQuotes(response.quotes);
+      setQuotes(response.items);
     } catch (err: any) {
       setError(err.message || 'Error cargando presupuestos');
     } finally {
@@ -114,7 +114,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
   };
 
   const handleQuotePress = (quote: Quote) => {
-    navigation.navigate('QuoteDetail', { quoteId: quote.id });
+    navigation.navigate('QuoteDetail', { quoteId: quote._id });
   };
 
   const handleCreateQuote = () => {
@@ -227,7 +227,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
               fontSize: TYPOGRAPHY.FONT_SIZE.XS,
               color: COLORS.textSecondary,
             }}>
-              {item.items.length} producto{item.items.length !== 1 ? 's' : ''}
+              {item.items?.length || 0} producto{(item.items?.length || 0) !== 1 ? 's' : ''}
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XS,
@@ -405,7 +405,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
       </View>
 
       {/* Stats Summary */}
-      {!searchQuery && quotes.length > 0 && (
+      {!searchQuery && (quotes?.length || 0) > 0 && (
         <View style={{
           flexDirection: 'row',
           paddingHorizontal: LAYOUT.SPACING.LG,
@@ -425,7 +425,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
               color: COLORS.text,
             }}>
-              {quotes.length}
+              {quotes?.length || 0}
             </Text>
           </View>
 
@@ -441,7 +441,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
               color: COLORS.warning,
             }}>
-              {quotes.filter(q => q.status === 'pending').length}
+              {quotes?.filter(q => q.status === 'pending')?.length || 0}
             </Text>
           </View>
 
@@ -457,7 +457,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
               color: COLORS.success,
             }}>
-              {quotes.filter(q => q.status === 'paid').length}
+              {quotes?.filter(q => q.status === 'paid')?.length || 0}
             </Text>
           </View>
         </View>
@@ -475,7 +475,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
       {/* Quotes List */}
       <FlatList
         data={filteredQuotes}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         renderItem={renderQuoteCard}
         contentContainerStyle={{
           padding: LAYOUT.SPACING.LG,

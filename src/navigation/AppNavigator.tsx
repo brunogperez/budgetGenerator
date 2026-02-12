@@ -54,7 +54,7 @@ const AppNavigator: React.FC = () => {
       console.log('🧭 Navigation state:', {
         isLoading,
         isAuthenticated,
-        user: user ? { id: user.id, name: user.name, role: user.role } : null,
+        user: user ? { _id: user._id, name: user.name, role: user.role } : null,
       });
     }
   }, [isLoading, isAuthenticated, user]);
@@ -69,7 +69,7 @@ const AppNavigator: React.FC = () => {
       onStateChange={(state) => {
         if (__DEV__ && state) {
           console.log('🧭 Navigation state changed:', {
-            routes: state.routes.map(route => route.name),
+            routeNames: state.routes.map(route => route.name).join(', '),
             index: state.index,
           });
         }

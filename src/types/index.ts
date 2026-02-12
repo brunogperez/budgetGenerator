@@ -7,7 +7,8 @@
 // ===============================
 
 export interface User {
-  id: string;
+  _id: string;
+  id?: string;
   email: string;
   name: string;
   role: 'admin' | 'seller';
@@ -17,7 +18,8 @@ export interface User {
 }
 
 export interface Product {
-  id: string;
+  _id: string;
+  id?: string;
   name: string;
   description: string;
   price: number;
@@ -48,7 +50,8 @@ export interface QuoteItem {
 }
 
 export interface Quote {
-  id: string;
+  _id: string;
+  id?: string;
   quoteNumber: string;
   customer: Customer;
   items: QuoteItem[];
@@ -66,7 +69,8 @@ export interface Quote {
 }
 
 export interface Payment {
-  id: string;
+  _id: string;
+  id?: string;
   quote: string;
   mercadopagoId?: string;
   status: 'pending' | 'approved' | 'rejected' | 'cancelled';
@@ -164,19 +168,27 @@ export interface PaginatedResponse<T> {
 }
 
 export interface ProductsResponse {
-  products: Product[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  items: Product[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
 }
 
 export interface QuotesResponse {
-  quotes: Quote[];
-  total: number;
-  page: number;
-  limit: number;
-  totalPages: number;
+  items: Quote[];
+  pagination: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+  };
 }
 
 export interface PaymentsResponse {

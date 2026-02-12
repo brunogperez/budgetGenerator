@@ -110,7 +110,7 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
         sortOrder: 'asc',
         isActive: true,
       });
-      setProducts(response.products.filter(p => p.stock > 0));
+      setProducts(response.items.filter(p => p.stock > 0));
     } catch (err: any) {
       setError(err.message || 'Error cargando productos');
     } finally {
@@ -152,7 +152,7 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
   };
 
   const addProductToQuote = (product: Product) => {
-    const existingItemIndex = formData.items.findIndex(item => item.product.id === product.id);
+    const existingItemIndex = formData.items.findIndex(item => item.product._id === product._id);
 
     if (existingItemIndex >= 0) {
       // Incrementar cantidad si ya existe
@@ -221,26 +221,41 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
   };
 
   const validateForm = (): boolean => {
+    console.log('🔍 ValidateForm called');
+
     const requestData: CreateQuoteRequest = {
       customer: formData.customer,
-      items: formData.items.map(item => ({
-        productId: item.product.id,
+      items: formData.items?.map(item => ({
+        productId: item.product._id,
         quantity: item.quantity,
-      })),
+      })) || [],
       discount: parseFloat(formData.discount || '0'),
       tax: parseFloat(formData.tax || '0'),
-      notes: formData.notes.trim() || undefined,
+      ...(formData.notes.trim() && { notes: formData.notes.trim() }),
     };
 
+    console.log('📋 Request data for validation:', requestData);
+
     const validation = quoteService.validateQuoteData(requestData);
+    console.log('📊 Validation result:', validation);
+
     setErrors(validation.errors);
     return validation.isValid;
   };
 
   const handleSubmit = async () => {
+    console.log('🚀 HandleSubmit called');
+    console.log('📝 Form data:', formData);
+    console.log('📦 Items count:', formData.items?.length || 0);
+    console.log('💾 Is saving:', isSaving);
+
     if (!validateForm()) {
+      console.log('❌ Validation failed');
+      console.log('💥 Validation errors:', errors);
       return;
     }
+
+    console.log('✅ Validation passed');
 
     try {
       setIsSaving(true);
@@ -249,13 +264,15 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
       const quoteData: CreateQuoteRequest = {
         customer: formData.customer,
         items: formData.items.map(item => ({
-          productId: item.product.id,
+          productId: item.product._id,
           quantity: item.quantity,
         })),
         discount: parseFloat(formData.discount || '0'),
         tax: parseFloat(formData.tax || '0'),
-        notes: formData.notes.trim() || undefined,
+        ...(formData.notes.trim() && { notes: formData.notes.trim() }),
       };
+
+      console.log('📋 Quote data completo:', JSON.stringify(quoteData, null, 2));
 
       const savedQuote = await quoteService.createQuote(quoteData);
 
@@ -266,13 +283,16 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
           {
             text: 'Ver presupuesto',
             onPress: () => {
-              navigation.replace('QuoteDetail', { quoteId: savedQuote.id });
+              navigation.replace('QuoteDetail', { quoteId: savedQuote._id });
             },
           },
         ]
       );
 
     } catch (err: any) {
+      console.log('❌ Error completo:', err);
+      console.log('❌ Error response:', err.response?.data);
+      console.log('❌ Error details:', err.response?.data?.error?.details);
       setError(err.message || 'Error creando presupuesto');
     } finally {
       setIsSaving(false);
@@ -424,77 +444,6 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
     return <Loading message="Cargando productos..." />;
   }
 
-  // ===============================
-  // PRODUCT PICKER MODAL
-  // ===============================
-
-  if (showProductPicker) {
-    return (
-      <View style={{ flex: 1, backgroundColor: COLORS.background }}>
-        {/* Header */}
-        <View style={{
-          paddingHorizontal: LAYOUT.SPACING.LG,
-          paddingTop: LAYOUT.SPACING.LG,
-          paddingBottom: LAYOUT.SPACING.MD,
-          backgroundColor: COLORS.surface,
-          borderBottomWidth: 1,
-          borderBottomColor: COLORS.border,
-        }}>
-          <View style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: LAYOUT.SPACING.MD,
-          }}>
-            <Text style={{
-              fontSize: TYPOGRAPHY.FONT_SIZE.LG,
-              fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-              color: COLORS.text,
-            }}>
-              Seleccionar Productos
-            </Text>
-            <TouchableOpacity onPress={() => setShowProductPicker(false)}>
-              <Text style={{
-                fontSize: TYPOGRAPHY.FONT_SIZE.LG,
-                color: COLORS.textSecondary,
-              }}>
-                ✕
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <Input
-            placeholder="Buscar productos..."
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            leftIcon={
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                🔍
-              </Text>
-            }
-          />
-        </View>
-
-        {/* Products List */}
-        <FlatList
-          data={filteredProducts}
-          keyExtractor={(item) => item.id}
-          renderItem={renderProductItem}
-          ListEmptyComponent={
-            <View style={{ padding: LAYOUT.SPACING.XL, alignItems: 'center' }}>
-              <Text style={{
-                fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-                color: COLORS.textSecondary,
-                textAlign: 'center',
-              }}>
-                {searchQuery ? 'No se encontraron productos' : 'No hay productos disponibles'}
-              </Text>
-            </View>
-          }
-        />
-      </View>
-    );
-  }
 
   // ===============================
   // MAIN FORM
@@ -505,11 +454,75 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <ScrollView
-        style={{ flex: 1, backgroundColor: COLORS.background }}
-        contentContainerStyle={{ padding: LAYOUT.SPACING.LG }}
-        keyboardShouldPersistTaps="handled"
-      >
+      {showProductPicker ? (
+        // Render product picker modal outside ScrollView
+        <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+          {/* Header */}
+          <View style={{
+            paddingHorizontal: LAYOUT.SPACING.LG,
+            paddingTop: LAYOUT.SPACING.LG,
+            paddingBottom: LAYOUT.SPACING.MD,
+            backgroundColor: COLORS.surface,
+            borderBottomWidth: 1,
+            borderBottomColor: COLORS.border,
+          }}>
+            <View style={{
+              flexDirection: 'row',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: LAYOUT.SPACING.MD,
+            }}>
+              <Text style={{
+                fontSize: TYPOGRAPHY.FONT_SIZE.LG,
+                fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
+                color: COLORS.text,
+              }}>
+                Seleccionar Producto
+              </Text>
+              <Button
+                title="Cerrar"
+                variant="secondary"
+                size="sm"
+                onPress={() => setShowProductPicker(false)}
+              />
+            </View>
+
+            <Input
+              placeholder="Buscar productos..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              leftIcon={
+                <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
+                  🔍
+                </Text>
+              }
+            />
+          </View>
+
+          {/* Products List */}
+          <FlatList
+            data={filteredProducts}
+            keyExtractor={(item) => item._id}
+            renderItem={renderProductItem}
+            ListEmptyComponent={
+              <View style={{ padding: LAYOUT.SPACING.XL, alignItems: 'center' }}>
+                <Text style={{
+                  fontSize: TYPOGRAPHY.FONT_SIZE.MD,
+                  color: COLORS.textSecondary,
+                  textAlign: 'center',
+                }}>
+                  {searchQuery ? 'No se encontraron productos' : 'No hay productos disponibles'}
+                </Text>
+              </View>
+            }
+          />
+        </View>
+      ) : (
+        <ScrollView
+          style={{ flex: 1, backgroundColor: COLORS.background }}
+          contentContainerStyle={{ padding: LAYOUT.SPACING.LG }}
+          keyboardShouldPersistTaps="handled"
+        >
         {/* General Error */}
         {error && (
           <ErrorMessage
@@ -588,7 +601,7 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
               color: COLORS.text,
             }}>
-              📦 Productos ({formData.items.length})
+              📦 Productos ({formData.items?.length || 0})
             </Text>
 
             <Button
@@ -600,7 +613,7 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
             />
           </View>
 
-          {formData.items.length === 0 ? (
+          {(formData.items?.length || 0) === 0 ? (
             <View style={{
               padding: LAYOUT.SPACING.XL,
               alignItems: 'center',
@@ -617,9 +630,9 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
               </Text>
             </View>
           ) : (
-            <View>
-              {formData.items.map((item, index) => (
-                <View key={item.product.id}>
+            <View key="cart-items-container">
+              {formData.items?.map((item, index) => (
+                <View key={`cart-item-${item.product?._id || 'unknown'}-${index}`}>
                   {renderCartItem({ item, index })}
                 </View>
               ))}
@@ -771,11 +784,15 @@ const CreateQuoteScreen: React.FC<CreateQuoteScreenProps> = ({ navigation }) => 
             title="Crear Presupuesto"
             onPress={handleSubmit}
             loading={isSaving}
-            disabled={isSaving || formData.items.length === 0}
-            style={{ flex: 2 }}
+            disabled={isSaving || (formData.items?.length || 0) === 0}
+            style={{
+              flex: 2,
+              opacity: (isSaving || (formData.items?.length || 0) === 0) ? 0.5 : 1
+            }}
           />
         </View>
-      </ScrollView>
+        </ScrollView>
+      )}
     </KeyboardAvoidingView>
   );
 };

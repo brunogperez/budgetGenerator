@@ -94,7 +94,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
   const handleEditQuote = () => {
     if (!quote) return;
     // Navigate to edit (could be same CreateQuote screen with edit mode)
-    navigation.navigate('CreateQuote', { quoteId: quote.id } as any);
+    navigation.navigate('CreateQuote', { quoteId: quote._id } as any);
   };
 
   const handleDeleteQuote = () => {
@@ -122,7 +122,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
     try {
       setIsDeleting(true);
-      await quoteService.cancelQuote(quote.id);
+      await quoteService.cancelQuote(quote._id);
       Alert.alert(
         'Exito',
         'Presupuesto cancelado correctamente',
@@ -145,7 +145,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
     try {
       setIsGeneratingPayment(true);
-      const payment = await paymentService.createPayment(quote.id);
+      const payment = await paymentService.createPayment(quote._id);
 
       // Navigate to QR screen
       navigation.navigate('PaymentQR', { paymentId: payment.paymentId });
@@ -209,7 +209,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingVertical: LAYOUT.SPACING.MD,
-        borderBottomWidth: index < quote.items.length - 1 ? 1 : 0,
+        borderBottomWidth: index < (quote.items?.length || 0) - 1 ? 1 : 0,
         borderBottomColor: COLORS.border,
       }}
     >
@@ -432,10 +432,14 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
           color: COLORS.text,
           marginBottom: LAYOUT.SPACING.MD,
         }}>
-          📦 Productos ({quote.items.length})
+          📦 Productos ({quote.items?.length || 0})
         </Text>
 
-        {quote.items.map((item, index) => renderQuoteItem(item, index))}
+        {quote.items?.map((item, index) => (
+          <View key={item.product?._id || index}>
+            {renderQuoteItem(item, index)}
+          </View>
+        ))}
       </Card>
 
       {/* Totals */}

@@ -93,8 +93,8 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
       // If payment is already completed, navigate to success
       if (result.payment.status === 'approved') {
         navigation.replace('PaymentSuccess', {
-          paymentId: result.payment.id,
-          quoteId: result.quote?.id || '',
+          paymentId: result.payment._id,
+          quoteId: result.quote?._id || '',
         });
       }
     } catch (err: any) {
@@ -109,7 +109,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
 
     try {
       setIsCheckingStatus(true);
-      const result = await paymentService.getPaymentStatus(payment.id);
+      const result = await paymentService.getPaymentStatus(payment._id);
       setPayment(result.payment);
       setQuote(result.quote);
       setLastStatusCheck(new Date());
@@ -117,8 +117,8 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
       if (result.payment.status === 'approved') {
         // Payment completed successfully
         navigation.replace('PaymentSuccess', {
-          paymentId: result.payment.id,
-          quoteId: result.quote?.id || '',
+          paymentId: result.payment._id,
+          quoteId: result.quote?._id || '',
         });
       } else if (result.payment.status === 'rejected' || result.payment.status === 'cancelled') {
         // Payment failed
