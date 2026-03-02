@@ -11,6 +11,7 @@ import {
   Alert,
   Share,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -21,6 +22,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 
 // Context
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 // Services
 import * as quoteService from '../../services/quoteService';
@@ -55,6 +57,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
   // ===============================
 
   const { user } = useAuth();
+  const { colors } = useTheme();
 
   // ===============================
   // STATE
@@ -124,7 +127,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
       setIsDeleting(true);
       await quoteService.cancelQuote(quote._id);
       Alert.alert(
-        'Exito',
+        'Éxito',
         'Presupuesto cancelado correctamente',
         [
           {
@@ -186,7 +189,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
   if (error || !quote) {
     return (
-      <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
         <ErrorMessage
           message={error || 'Presupuesto no encontrado'}
           variant="card"
@@ -210,14 +213,14 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
         alignItems: 'center',
         paddingVertical: LAYOUT.SPACING.MD,
         borderBottomWidth: index < (quote.items?.length || 0) - 1 ? 1 : 0,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: colors.border,
       }}
     >
       <View style={{ flex: 1, marginRight: LAYOUT.SPACING.MD }}>
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.MD,
           fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-          color: COLORS.text,
+          color: colors.text,
           marginBottom: LAYOUT.SPACING.XS,
         }}>
           {item.product.name}
@@ -226,7 +229,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
         {item.product.description && (
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
             marginBottom: LAYOUT.SPACING.XS,
           }} numberOfLines={2}>
             {item.product.description}
@@ -235,7 +238,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-          color: COLORS.textTertiary,
+          color: colors.textTertiary,
         }}>
           {productService.formatPrice(item.productSnapshot.price)} x {item.quantity}
         </Text>
@@ -244,7 +247,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
       <Text style={{
         fontSize: TYPOGRAPHY.FONT_SIZE.LG,
         fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-        color: COLORS.primary,
+        color: colors.primary,
       }}>
         {productService.formatPrice(item.subtotal)}
       </Text>
@@ -258,7 +261,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: COLORS.background }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: LAYOUT.SPACING.LG }}
     >
       {/* Header Card */}
@@ -273,7 +276,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.text,
+              color: colors.text,
               flex: 1,
             }}>
               {quote.quoteNumber}
@@ -299,7 +302,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
             marginBottom: LAYOUT.SPACING.XS,
           }}>
             Creado el {new Date(quote.createdAt).toLocaleDateString('es-AR', {
@@ -314,10 +317,10 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
           {quote.expiresAt && (
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: isExpired ? COLORS.error : isExpiringSoon ? COLORS.warning : COLORS.textTertiary,
+              color: isExpired ? colors.error : isExpiringSoon ? colors.warning : colors.textTertiary,
               fontWeight: (isExpired || isExpiringSoon) ? TYPOGRAPHY.FONT_WEIGHT.MEDIUM : TYPOGRAPHY.FONT_WEIGHT.REGULAR,
             }}>
-              {isExpired ? '❌ Expirado' : `Válido hasta: ${new Date(quote.expiresAt).toLocaleDateString('es-AR')}`}
+              {isExpired ? 'Expirado' : `Válido hasta: ${new Date(quote.expiresAt).toLocaleDateString('es-AR')}`}
               {isExpiringSoon && ` (${timeInfo.timeLeft})`}
             </Text>
           )}
@@ -333,17 +336,19 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
             marginBottom: LAYOUT.SPACING.LG,
             backgroundColor: COLORS.errorLight + '20',
             borderWidth: 1,
-            borderColor: COLORS.error,
+            borderColor: colors.error,
           }}
         >
-          <Text style={{
-            fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.error,
-            fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-            textAlign: 'center',
-          }}>
-            ❌ Este presupuesto ha expirado
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <MaterialCommunityIcons name="close-circle-outline" size={20} color={colors.error} style={{ marginRight: 8 }} />
+            <Text style={{
+              fontSize: TYPOGRAPHY.FONT_SIZE.MD,
+              color: colors.error,
+              fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
+            }}>
+              Este presupuesto ha expirado
+            </Text>
+          </View>
         </Card>
       )}
 
@@ -355,36 +360,40 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
             marginBottom: LAYOUT.SPACING.LG,
             backgroundColor: COLORS.warningLight + '20',
             borderWidth: 1,
-            borderColor: COLORS.warning,
+            borderColor: colors.warning,
           }}
         >
-          <Text style={{
-            fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.warning,
-            fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-            textAlign: 'center',
-          }}>
-            ⏰ Expira en {timeInfo.timeLeft}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <MaterialCommunityIcons name="clock-alert-outline" size={20} color={colors.warning} style={{ marginRight: 8 }} />
+            <Text style={{
+              fontSize: TYPOGRAPHY.FONT_SIZE.MD,
+              color: colors.warning,
+              fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
+            }}>
+              Expira en {timeInfo.timeLeft}
+            </Text>
+          </View>
         </Card>
       )}
 
       {/* Customer Info */}
       <Card variant="outlined" padding="lg" style={{ marginBottom: LAYOUT.SPACING.LG }}>
-        <Text style={{
-          fontSize: TYPOGRAPHY.FONT_SIZE.LG,
-          fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-          color: COLORS.text,
-          marginBottom: LAYOUT.SPACING.MD,
-        }}>
-          👤 Cliente
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: LAYOUT.SPACING.MD }}>
+          <MaterialCommunityIcons name="account-outline" size={20} color={colors.text} style={{ marginRight: 8 }} />
+          <Text style={{
+            fontSize: TYPOGRAPHY.FONT_SIZE.LG,
+            fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
+            color: colors.text,
+          }}>
+            Cliente
+          </Text>
+        </View>
 
         <View style={{ marginBottom: LAYOUT.SPACING.SM }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-            color: COLORS.text,
+            color: colors.text,
           }}>
             {quote.customer.name}
           </Text>
@@ -392,48 +401,59 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
         {quote.customer.email && (
           <View style={{ marginBottom: LAYOUT.SPACING.SM }}>
-            <Text style={{
-              fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
-            }}>
-              📧 {quote.customer.email}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <MaterialCommunityIcons name="email-outline" size={16} color={colors.textSecondary} style={{ marginRight: 6 }} />
+              <Text style={{
+                fontSize: TYPOGRAPHY.FONT_SIZE.SM,
+                color: colors.textSecondary,
+              }}>
+                {quote.customer.email}
+              </Text>
+            </View>
           </View>
         )}
 
         {quote.customer.phone && (
           <View style={{ marginBottom: LAYOUT.SPACING.SM }}>
-            <Text style={{
-              fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
-            }}>
-              📞 {quote.customer.phone}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <MaterialCommunityIcons name="phone-outline" size={16} color={colors.textSecondary} style={{ marginRight: 6 }} />
+              <Text style={{
+                fontSize: TYPOGRAPHY.FONT_SIZE.SM,
+                color: colors.textSecondary,
+              }}>
+                {quote.customer.phone}
+              </Text>
+            </View>
           </View>
         )}
 
         {quote.customer.address && (
           <View>
-            <Text style={{
-              fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
-            }}>
-              📍 {quote.customer.address}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <MaterialCommunityIcons name="map-marker-outline" size={16} color={colors.textSecondary} style={{ marginRight: 6 }} />
+              <Text style={{
+                fontSize: TYPOGRAPHY.FONT_SIZE.SM,
+                color: colors.textSecondary,
+              }}>
+                {quote.customer.address}
+              </Text>
+            </View>
           </View>
         )}
       </Card>
 
       {/* Items */}
       <Card variant="outlined" padding="lg" style={{ marginBottom: LAYOUT.SPACING.LG }}>
-        <Text style={{
-          fontSize: TYPOGRAPHY.FONT_SIZE.LG,
-          fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-          color: COLORS.text,
-          marginBottom: LAYOUT.SPACING.MD,
-        }}>
-          📦 Productos ({quote.items?.length || 0})
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: LAYOUT.SPACING.MD }}>
+          <MaterialCommunityIcons name="package-variant" size={20} color={colors.text} style={{ marginRight: 8 }} />
+          <Text style={{
+            fontSize: TYPOGRAPHY.FONT_SIZE.LG,
+            fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
+            color: colors.text,
+          }}>
+            Productos ({quote.items?.length || 0})
+          </Text>
+        </View>
 
         {quote.items?.map((item, index) => (
           <View key={item.product?._id || index}>
@@ -444,14 +464,16 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
 
       {/* Totals */}
       <Card variant="outlined" padding="lg" style={{ marginBottom: LAYOUT.SPACING.LG }}>
-        <Text style={{
-          fontSize: TYPOGRAPHY.FONT_SIZE.LG,
-          fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-          color: COLORS.text,
-          marginBottom: LAYOUT.SPACING.MD,
-        }}>
-          💰 Totales
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: LAYOUT.SPACING.MD }}>
+          <MaterialCommunityIcons name="currency-usd" size={20} color={colors.text} style={{ marginRight: 8 }} />
+          <Text style={{
+            fontSize: TYPOGRAPHY.FONT_SIZE.LG,
+            fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
+            color: colors.text,
+          }}>
+            Totales
+          </Text>
+        </View>
 
         <View style={{
           flexDirection: 'row',
@@ -461,13 +483,13 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
           }}>
             Subtotal
           </Text>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.text,
+            color: colors.text,
           }}>
             {productService.formatPrice(quote.subtotal)}
           </Text>
@@ -482,13 +504,13 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.success,
+              color: colors.success,
             }}>
               Descuento
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.success,
+              color: colors.success,
             }}>
               -{productService.formatPrice(quote.discount)}
             </Text>
@@ -504,13 +526,13 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Impuestos
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               +{productService.formatPrice(quote.tax)}
             </Text>
@@ -523,19 +545,19 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
           alignItems: 'center',
           paddingTop: LAYOUT.SPACING.MD,
           borderTopWidth: 2,
-          borderTopColor: COLORS.primary,
+          borderTopColor: colors.primary,
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.XL,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-            color: COLORS.text,
+            color: colors.text,
           }}>
             Total
           </Text>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-            color: COLORS.primary,
+            color: colors.primary,
           }}>
             {productService.formatPrice(quote.total)}
           </Text>
@@ -545,17 +567,19 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
       {/* Notes */}
       {quote.notes && (
         <Card variant="outlined" padding="lg" style={{ marginBottom: LAYOUT.SPACING.LG }}>
-          <Text style={{
-            fontSize: TYPOGRAPHY.FONT_SIZE.LG,
-            fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-            color: COLORS.text,
-            marginBottom: LAYOUT.SPACING.MD,
-          }}>
-            📝 Notas
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: LAYOUT.SPACING.MD }}>
+            <MaterialCommunityIcons name="note-text-outline" size={20} color={colors.text} style={{ marginRight: 8 }} />
+            <Text style={{
+              fontSize: TYPOGRAPHY.FONT_SIZE.LG,
+              fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
+              color: colors.text,
+            }}>
+              Notas
+            </Text>
+          </View>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
             lineHeight: 22,
           }}>
             {quote.notes}
@@ -571,7 +595,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
           variant="outline"
           onPress={handleShareQuote}
           fullWidth
-          leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>📤</Text>}
+          leftIcon={<MaterialCommunityIcons name="share-variant-outline" size={18} color={colors.primary} style={{ marginRight: LAYOUT.SPACING.SM }} />}
         />
 
         {/* Payment Button */}
@@ -582,7 +606,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
             loading={isGeneratingPayment}
             disabled={isGeneratingPayment}
             fullWidth
-            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>💳</Text>}
+            leftIcon={<MaterialCommunityIcons name="credit-card-outline" size={18} color="#FFFFFF" style={{ marginRight: LAYOUT.SPACING.SM }} />}
           />
         )}
 
@@ -595,7 +619,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
               onPress={handleEditQuote}
               fullWidth
               disabled={quote.status !== 'pending' || isExpired}
-              leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>✏️</Text>}
+              leftIcon={<MaterialCommunityIcons name="pencil-outline" size={18} color={colors.primary} style={{ marginRight: LAYOUT.SPACING.SM }} />}
             />
 
             <Button
@@ -605,7 +629,7 @@ const QuoteDetailScreen: React.FC<QuoteDetailScreenProps> = ({ route, navigation
               loading={isDeleting}
               disabled={isDeleting}
               fullWidth
-              leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>🗑️</Text>}
+              leftIcon={<MaterialCommunityIcons name="delete-outline" size={18} color="#FFFFFF" style={{ marginRight: LAYOUT.SPACING.SM }} />}
             />
           </View>
         )}

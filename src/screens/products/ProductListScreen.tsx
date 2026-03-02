@@ -10,6 +10,7 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -20,6 +21,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 
 // Context
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 // Services
 import * as productService from '../../services/productService';
@@ -46,6 +48,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
   // ===============================
 
   const { user } = useAuth();
+  const { colors } = useTheme();
 
   // ===============================
   // STATE
@@ -144,7 +147,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.LG,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-              color: COLORS.text,
+              color: colors.text,
               marginBottom: LAYOUT.SPACING.XS,
             }}>
               {item.name}
@@ -152,7 +155,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               marginBottom: LAYOUT.SPACING.SM,
               lineHeight: 18,
             }} numberOfLines={2}>
@@ -163,7 +166,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.LG,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-                color: COLORS.primary,
+                color: colors.primary,
               }}>
                 {productService.formatPrice(item.price)}
               </Text>
@@ -191,8 +194,8 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
               }}>
                 <Text style={{
                   fontSize: TYPOGRAPHY.FONT_SIZE.XS,
-                  color: COLORS.textTertiary,
-                  backgroundColor: COLORS.backgroundSecondary,
+                  color: colors.textTertiary,
+                  backgroundColor: colors.backgroundSecondary,
                   paddingHorizontal: LAYOUT.SPACING.SM,
                   paddingVertical: LAYOUT.SPACING.XS,
                   borderRadius: LAYOUT.BORDER_RADIUS.SM,
@@ -207,12 +210,12 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
             <View style={{
               width: 60,
               height: 60,
-              backgroundColor: COLORS.backgroundSecondary,
+              backgroundColor: colors.backgroundSecondary,
               borderRadius: LAYOUT.BORDER_RADIUS.MD,
               justifyContent: 'center',
               alignItems: 'center',
             }}>
-              <Text style={{ fontSize: 24 }}>📦</Text>
+              <MaterialCommunityIcons name="package-variant" size={24} color={colors.textSecondary} />
             </View>
           )}
         </View>
@@ -227,11 +230,11 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
       alignItems: 'center',
       paddingVertical: LAYOUT.SPACING.XXL,
     }}>
-      <Text style={{ fontSize: 48, marginBottom: LAYOUT.SPACING.MD }}>📦</Text>
+      <MaterialCommunityIcons name="package-variant" size={48} color={colors.primary} style={{ marginBottom: LAYOUT.SPACING.MD }} />
       <Text style={{
         fontSize: TYPOGRAPHY.FONT_SIZE.LG,
         fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-        color: COLORS.text,
+        color: colors.text,
         marginBottom: LAYOUT.SPACING.SM,
         textAlign: 'center',
       }}>
@@ -239,7 +242,7 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
       </Text>
       <Text style={{
         fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-        color: COLORS.textSecondary,
+        color: colors.textSecondary,
         textAlign: 'center',
         marginBottom: LAYOUT.SPACING.LG,
         paddingHorizontal: LAYOUT.SPACING.LG,
@@ -254,14 +257,14 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
         <TouchableOpacity
           onPress={handleAddProduct}
           style={{
-            backgroundColor: COLORS.primary,
+            backgroundColor: colors.primary,
             paddingHorizontal: LAYOUT.SPACING.LG,
             paddingVertical: LAYOUT.SPACING.MD,
             borderRadius: LAYOUT.BORDER_RADIUS.MD,
           }}
         >
           <Text style={{
-            color: COLORS.background,
+            color: colors.background,
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
           }}>
@@ -285,29 +288,25 @@ const ProductListScreen: React.FC<ProductListScreenProps> = ({ navigation }) => 
   // ===============================
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       {/* Search Header */}
       <View style={{
         paddingHorizontal: LAYOUT.SPACING.LG,
         paddingVertical: LAYOUT.SPACING.MD,
-        backgroundColor: COLORS.surface,
+        backgroundColor: colors.surface,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: colors.border,
       }}>
         <Input
           placeholder="Buscar productos..."
           value={searchQuery}
           onChangeText={handleSearchChange}
           leftIcon={
-            <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-              🔍
-            </Text>
+            <MaterialCommunityIcons name="magnify" size={20} color={colors.textSecondary} />
           }
           rightIcon={searchQuery ? (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                ✕
-              </Text>
+              <MaterialCommunityIcons name="close" size={20} color={colors.textSecondary} />
             </TouchableOpacity>
           ) : undefined}
           onRightIconPress={searchQuery ? () => setSearchQuery('') : undefined}

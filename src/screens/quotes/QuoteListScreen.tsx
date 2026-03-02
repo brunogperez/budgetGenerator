@@ -10,6 +10,7 @@ import {
   RefreshControl,
   TouchableOpacity,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -20,6 +21,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 
 // Context
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 // Services
 import * as quoteService from '../../services/quoteService';
@@ -46,6 +48,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
   // ===============================
 
   const { user } = useAuth();
+  const { colors } = useTheme();
 
   // ===============================
   // STATE
@@ -158,7 +161,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.LG,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-              color: COLORS.text,
+              color: colors.text,
               flex: 1,
             }}>
               {item.quoteNumber}
@@ -183,7 +186,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-            color: COLORS.text,
+            color: colors.text,
             marginBottom: LAYOUT.SPACING.XS,
           }}>
             {item.customer.name}
@@ -192,7 +195,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
           {item.customer.email && (
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               marginBottom: LAYOUT.SPACING.SM,
             }}>
               {item.customer.email}
@@ -209,14 +212,14 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
           <View>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Total
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XL,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.primary,
+              color: colors.primary,
             }}>
               ${item.total.toLocaleString('es-AR')}
             </Text>
@@ -225,13 +228,13 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
           <View style={{ alignItems: 'flex-end' }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XS,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               {item.items?.length || 0} producto{(item.items?.length || 0) !== 1 ? 's' : ''}
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XS,
-              color: COLORS.textTertiary,
+              color: colors.textTertiary,
             }}>
               {new Date(item.createdAt).toLocaleDateString('es-AR')}
             </Text>
@@ -246,16 +249,18 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
             borderRadius: LAYOUT.BORDER_RADIUS.SM,
             marginBottom: LAYOUT.SPACING.SM,
             borderWidth: 1,
-            borderColor: COLORS.warning,
+            borderColor: colors.warning,
           }}>
-            <Text style={{
-              fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.warning,
-              fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-              textAlign: 'center',
-            }}>
-              ⏰ Expira en {timeInfo.timeLeft}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+              <MaterialCommunityIcons name="clock-alert-outline" size={16} color={colors.warning} style={{ marginRight: 6 }} />
+              <Text style={{
+                fontSize: TYPOGRAPHY.FONT_SIZE.SM,
+                color: colors.warning,
+                fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
+              }}>
+                Expira en {timeInfo.timeLeft}
+              </Text>
+            </View>
           </View>
         )}
 
@@ -270,19 +275,22 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
               onPress={() => handlePayQuote(item)}
               style={{
                 flex: 1,
-                backgroundColor: COLORS.primary,
+                backgroundColor: colors.primary,
                 paddingVertical: LAYOUT.SPACING.SM,
                 borderRadius: LAYOUT.BORDER_RADIUS.MD,
                 alignItems: 'center',
               }}
             >
-              <Text style={{
-                color: COLORS.background,
-                fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-                fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-              }}>
-                💳 Generar Pago
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialCommunityIcons name="credit-card-outline" size={16} color={colors.background} style={{ marginRight: 6 }} />
+                <Text style={{
+                  color: colors.background,
+                  fontSize: TYPOGRAPHY.FONT_SIZE.SM,
+                  fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
+                }}>
+                  Generar Pago
+                </Text>
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -292,12 +300,12 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
                 paddingVertical: LAYOUT.SPACING.SM,
                 borderRadius: LAYOUT.BORDER_RADIUS.MD,
                 borderWidth: 1,
-                borderColor: COLORS.border,
+                borderColor: colors.border,
                 alignItems: 'center',
               }}
             >
               <Text style={{
-                color: COLORS.textSecondary,
+                color: colors.textSecondary,
                 fontSize: TYPOGRAPHY.FONT_SIZE.SM,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
               }}>
@@ -317,11 +325,11 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
       alignItems: 'center',
       paddingVertical: LAYOUT.SPACING.XXL,
     }}>
-      <Text style={{ fontSize: 48, marginBottom: LAYOUT.SPACING.MD }}>📋</Text>
+      <MaterialCommunityIcons name="clipboard-text-outline" size={48} color={colors.primary} style={{ marginBottom: LAYOUT.SPACING.MD }} />
       <Text style={{
         fontSize: TYPOGRAPHY.FONT_SIZE.LG,
         fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-        color: COLORS.text,
+        color: colors.text,
         marginBottom: LAYOUT.SPACING.SM,
         textAlign: 'center',
       }}>
@@ -329,7 +337,7 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
       </Text>
       <Text style={{
         fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-        color: COLORS.textSecondary,
+        color: colors.textSecondary,
         textAlign: 'center',
         marginBottom: LAYOUT.SPACING.LG,
         paddingHorizontal: LAYOUT.SPACING.LG,
@@ -344,14 +352,14 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
         <TouchableOpacity
           onPress={handleCreateQuote}
           style={{
-            backgroundColor: COLORS.primary,
+            backgroundColor: colors.primary,
             paddingHorizontal: LAYOUT.SPACING.LG,
             paddingVertical: LAYOUT.SPACING.MD,
             borderRadius: LAYOUT.BORDER_RADIUS.MD,
           }}
         >
           <Text style={{
-            color: COLORS.background,
+            color: colors.background,
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
           }}>
@@ -375,29 +383,25 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
   // ===============================
 
   return (
-    <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
       {/* Search Header */}
       <View style={{
         paddingHorizontal: LAYOUT.SPACING.LG,
         paddingVertical: LAYOUT.SPACING.MD,
-        backgroundColor: COLORS.surface,
+        backgroundColor: colors.surface,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: colors.border,
       }}>
         <Input
           placeholder="Buscar presupuestos..."
           value={searchQuery}
           onChangeText={handleSearchChange}
           leftIcon={
-            <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-              🔍
-            </Text>
+            <MaterialCommunityIcons name="magnify" size={20} color={colors.textSecondary} />
           }
           rightIcon={searchQuery ? (
             <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                ✕
-              </Text>
+              <MaterialCommunityIcons name="close" size={20} color={colors.textSecondary} />
             </TouchableOpacity>
           ) : undefined}
           onRightIconPress={searchQuery ? () => setSearchQuery('') : undefined}
@@ -410,20 +414,20 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
           flexDirection: 'row',
           paddingHorizontal: LAYOUT.SPACING.LG,
           paddingVertical: LAYOUT.SPACING.MD,
-          backgroundColor: COLORS.backgroundSecondary,
+          backgroundColor: colors.backgroundSecondary,
           gap: LAYOUT.SPACING.MD,
         }}>
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Total
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               {quotes?.length || 0}
             </Text>
@@ -432,14 +436,14 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Pendientes
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.warning,
+              color: colors.warning,
             }}>
               {quotes?.filter(q => q.status === 'pending')?.length || 0}
             </Text>
@@ -448,14 +452,14 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Pagados
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.success,
+              color: colors.success,
             }}>
               {quotes?.filter(q => q.status === 'paid')?.length || 0}
             </Text>
@@ -485,8 +489,8 @@ const QuoteListScreen: React.FC<QuoteListScreenProps> = ({ navigation }) => {
           <RefreshControl
             refreshing={isRefreshing}
             onRefresh={handleRefresh}
-            colors={[COLORS.primary]}
-            tintColor={COLORS.primary}
+            colors={[colors.primary]}
+            tintColor={colors.primary}
           />
         }
         ListEmptyComponent={renderEmptyState}

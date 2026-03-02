@@ -11,6 +11,7 @@ import {
   Share,
   Linking,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import * as ExpoClipboard from 'expo-clipboard';
 import { StackScreenProps } from '@react-navigation/stack';
 
@@ -29,6 +30,9 @@ import { Payment, Quote, QuoteStackParamList } from '../../types';
 // Constants
 import { COLORS, LAYOUT, TYPOGRAPHY } from '../../constants/config';
 
+// Theme
+import { useTheme } from '../../context/ThemeContext';
+
 // ===============================
 // TYPES
 // ===============================
@@ -45,6 +49,12 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
   // ===============================
 
   const { paymentId } = route.params;
+
+  // ===============================
+  // THEME
+  // ===============================
+
+  const { colors } = useTheme();
 
   // ===============================
   // STATE
@@ -98,7 +108,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
         });
       }
     } catch (err: any) {
-      setError(err.message || 'Error cargando informacion de pago');
+      setError(err.message || 'Error cargando información de pago');
     } finally {
       setIsLoading(false);
     }
@@ -184,7 +194,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
   const handleCancelPayment = () => {
     Alert.alert(
       'Cancelar Pago',
-      'Estas seguro que quieres cancelar este pago?',
+      '¿Estás seguro que quieres cancelar este pago?',
       [
         {
           text: 'No',
@@ -204,7 +214,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
   // ===============================
 
   if (isLoading) {
-    return <Loading message="Cargando codigo QR..." />;
+    return <Loading message="Cargando código QR..." />;
   }
 
   // ===============================
@@ -213,7 +223,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
 
   if (error || !payment || !quote) {
     return (
-      <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
         <ErrorMessage
           message={error || 'Pago no encontrado'}
           variant="card"
@@ -241,7 +251,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: COLORS.background }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: LAYOUT.SPACING.LG }}
     >
       {/* Header */}
@@ -250,11 +260,11 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-            color: COLORS.text,
+            color: colors.text,
             marginBottom: LAYOUT.SPACING.SM,
             textAlign: 'center',
           }}>
-            Codigo QR de Pago
+            Código QR de Pago
           </Text>
 
           <View style={{
@@ -283,49 +293,49 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           <View style={{
             width: 250,
             height: 250,
-            backgroundColor: COLORS.backgroundSecondary,
+            backgroundColor: colors.backgroundSecondary,
             borderRadius: LAYOUT.BORDER_RADIUS.LG,
             justifyContent: 'center',
             alignItems: 'center',
             marginBottom: LAYOUT.SPACING.LG,
             borderWidth: 2,
-            borderColor: COLORS.border,
+            borderColor: colors.border,
           }}>
             <Text style={{ fontSize: 48 }}>QR</Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               textAlign: 'center',
               marginTop: LAYOUT.SPACING.SM,
             }}>
-              Codigo QR
+              Código QR
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textTertiary,
+              color: colors.textTertiary,
               textAlign: 'center',
             }}>
-              (Se mostraria aqui)
+              (Se mostraría aquí)
             </Text>
           </View>
 
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.LG,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-            color: COLORS.text,
+            color: colors.text,
             textAlign: 'center',
             marginBottom: LAYOUT.SPACING.SM,
           }}>
-            Escaneá el codigo con MercadoPago
+            Escaneá el código con MercadoPago
           </Text>
 
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
             textAlign: 'center',
             lineHeight: 22,
           }}>
-            Abrí la app de MercadoPago, tocá "Pagar con QR" y escaneá este codigo
+            Abrí la app de MercadoPago, tocá "Pagar con QR" y escaneá este código
           </Text>
         </View>
       </Card>
@@ -335,7 +345,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.LG,
           fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-          color: COLORS.text,
+          color: colors.text,
           marginBottom: LAYOUT.SPACING.MD,
         }}>
           Detalles del Pago
@@ -349,14 +359,14 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
           }}>
             Presupuesto
           </Text>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-            color: COLORS.text,
+            color: colors.text,
           }}>
             {quote.quoteNumber}
           </Text>
@@ -370,13 +380,13 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
           }}>
             Cliente
           </Text>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.text,
+            color: colors.text,
           }}>
             {quote.customer.name}
           </Text>
@@ -388,19 +398,19 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           alignItems: 'center',
           paddingTop: LAYOUT.SPACING.MD,
           borderTopWidth: 1,
-          borderTopColor: COLORS.border,
+          borderTopColor: colors.border,
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.LG,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-            color: COLORS.text,
+            color: colors.text,
           }}>
             Total a pagar
           </Text>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-            color: COLORS.primary,
+            color: colors.primary,
           }}>
             ${payment.amount.toLocaleString('es-AR')}
           </Text>
@@ -410,7 +420,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
       {/* Status Check */}
       <Card variant="filled" padding="md" style={{
         marginBottom: LAYOUT.SPACING.LG,
-        backgroundColor: COLORS.backgroundSecondary,
+        backgroundColor: colors.backgroundSecondary,
       }}>
         <View style={{
           flexDirection: 'row',
@@ -420,7 +430,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
           <View style={{ flex: 1 }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               marginBottom: LAYOUT.SPACING.XS,
             }}>
               Estado del pago
@@ -428,9 +438,9 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-              color: COLORS.text,
+              color: colors.text,
             }}>
-              {isCheckingStatus ? 'Verificando...' : `Ultima verificacion: ${formatTimeAgo(lastStatusCheck)}`}
+              {isCheckingStatus ? 'Verificando...' : `Última verificación: ${formatTimeAgo(lastStatusCheck)}`}
             </Text>
           </View>
 
@@ -450,7 +460,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.LG,
           fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-          color: COLORS.text,
+          color: colors.text,
           marginBottom: LAYOUT.SPACING.MD,
         }}>
           Instrucciones
@@ -458,37 +468,37 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
 
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-          color: COLORS.text,
+          color: colors.text,
           lineHeight: 22,
           marginBottom: LAYOUT.SPACING.SM,
         }}>
-          1. Abrí la aplicacion de MercadoPago
+          1. Abrí la aplicación de MercadoPago
         </Text>
 
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-          color: COLORS.text,
+          color: colors.text,
           lineHeight: 22,
           marginBottom: LAYOUT.SPACING.SM,
         }}>
-          2. Tocá "Pagar con QR" o el icono de la camara
+          2. Tocá "Pagar con QR" o el icono de la cámara
         </Text>
 
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-          color: COLORS.text,
+          color: colors.text,
           lineHeight: 22,
           marginBottom: LAYOUT.SPACING.SM,
         }}>
-          3. Escaneá este codigo QR
+          3. Escaneá este código QR
         </Text>
 
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-          color: COLORS.text,
+          color: colors.text,
           lineHeight: 22,
         }}>
-          4. Confirmá el pago en tu aplicacion
+          4. Confirmá el pago en tu aplicación
         </Text>
       </Card>
 
@@ -500,17 +510,17 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
             title="Abrir en MercadoPago"
             onPress={handleOpenMercadoPago}
             fullWidth
-            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>{'🔗'}</Text>}
+            leftIcon={<MaterialCommunityIcons name="link-variant" size={18} color="#FFFFFF" style={{ marginRight: LAYOUT.SPACING.SM }} />}
           />
         )}
 
         {/* Share Payment */}
         <Button
-          title="Compartir Codigo"
+          title="Compartir Código"
           variant="outline"
           onPress={handleSharePayment}
           fullWidth
-          leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>{'📤'}</Text>}
+          leftIcon={<MaterialCommunityIcons name="share-variant-outline" size={18} color={colors.primary} style={{ marginRight: LAYOUT.SPACING.SM }} />}
         />
 
         {/* Copy QR Data */}
@@ -520,7 +530,7 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
             variant="outline"
             onPress={handleCopyQRData}
             fullWidth
-            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>{'📋'}</Text>}
+            leftIcon={<MaterialCommunityIcons name="clipboard-text-outline" size={18} color={colors.primary} style={{ marginRight: LAYOUT.SPACING.SM }} />}
           />
         )}
 
@@ -538,13 +548,13 @@ const PaymentQRScreen: React.FC<PaymentQRScreenProps> = ({ route, navigation }) 
       <View style={{ marginTop: LAYOUT.SPACING.LG }}>
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-          color: COLORS.textTertiary,
+          color: colors.textTertiary,
           textAlign: 'center',
           lineHeight: 18,
         }}>
-          Esta pantalla se actualiza automaticamente cada 10 segundos.
+          Esta pantalla se actualiza automáticamente cada 10 segundos.
           {'\n'}
-          Una vez confirmado el pago, serás redirigido automaticamente.
+          Una vez confirmado el pago, serás redirigido automáticamente.
         </Text>
       </View>
     </ScrollView>

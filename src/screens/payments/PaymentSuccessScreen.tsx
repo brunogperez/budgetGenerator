@@ -11,6 +11,7 @@ import {
   Easing,
   Share,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -29,6 +30,9 @@ import { Payment, Quote, QuoteStackParamList } from '../../types';
 // Constants
 import { COLORS, LAYOUT, TYPOGRAPHY } from '../../constants/config';
 
+// Theme
+import { useTheme } from '../../context/ThemeContext';
+
 // ===============================
 // TYPES
 // ===============================
@@ -40,6 +44,12 @@ type PaymentSuccessScreenProps = StackScreenProps<QuoteStackParamList, 'PaymentS
 // ===============================
 
 const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navigation }) => {
+  // ===============================
+  // THEME
+  // ===============================
+
+  const { colors } = useTheme();
+
   // ===============================
   // PARAMS
   // ===============================
@@ -87,7 +97,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
       setPayment(result.payment);
       setQuote(result.quote);
     } catch (err: any) {
-      setError(err.message || 'Error cargando informacion del pago');
+      setError(err.message || 'Error cargando información del pago');
     } finally {
       setIsLoading(false);
     }
@@ -134,7 +144,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
     if (!payment || !quote) return;
 
     try {
-      const text = `Comprobante de Pago - ${quote.quoteNumber}\nMonto: $${payment.amount.toLocaleString('es-AR')}\nEstado: ${paymentService.formatPaymentStatus(payment.status).label}\nFecha: ${new Date(payment.paidAt || payment.updatedAt).toLocaleDateString('es-AR')}${payment.mercadopagoId ? `\nID Transaccion: ${payment.mercadopagoId}` : ''}`;
+      const text = `Comprobante de Pago - ${quote.quoteNumber}\nMonto: $${payment.amount.toLocaleString('es-AR')}\nEstado: ${paymentService.formatPaymentStatus(payment.status).label}\nFecha: ${new Date(payment.paidAt || payment.updatedAt).toLocaleDateString('es-AR')}${payment.mercadopagoId ? `\nID Transacción: ${payment.mercadopagoId}` : ''}`;
       await Share.share({
         message: text,
         title: `Comprobante de Pago - ${quote.quoteNumber}`,
@@ -149,7 +159,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
   // ===============================
 
   if (isLoading) {
-    return <Loading message="Cargando informacion del pago..." />;
+    return <Loading message="Cargando información del pago..." />;
   }
 
   // ===============================
@@ -158,9 +168,9 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
 
   if (error || !payment || !quote) {
     return (
-      <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
         <ErrorMessage
-          message={error || 'Informacion del pago no disponible'}
+          message={error || 'Información del pago no disponible'}
           variant="card"
           onRetry={loadPaymentData}
           style={{ margin: LAYOUT.SPACING.LG }}
@@ -177,7 +187,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: COLORS.background }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: LAYOUT.SPACING.LG }}
     >
       {/* Success Animation */}
@@ -195,17 +205,17 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
           <View style={{
             width: 120,
             height: 120,
-            backgroundColor: COLORS.success,
+            backgroundColor: colors.success,
             borderRadius: 60,
             justifyContent: 'center',
             alignItems: 'center',
-            shadowColor: COLORS.success,
+            shadowColor: colors.success,
             shadowOffset: { width: 0, height: 8 },
             shadowOpacity: 0.3,
             shadowRadius: 16,
             elevation: 8,
           }}>
-            <Text style={{ fontSize: 48, color: COLORS.background }}>{'✓'}</Text>
+            <MaterialCommunityIcons name="check" size={48} color={colors.background} />
           </View>
         </Animated.View>
 
@@ -213,7 +223,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-            color: COLORS.success,
+            color: colors.success,
             marginBottom: LAYOUT.SPACING.SM,
             textAlign: 'center',
           }}>
@@ -222,7 +232,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
 
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.LG,
-            color: COLORS.text,
+            color: colors.text,
             textAlign: 'center',
             marginBottom: LAYOUT.SPACING.SM,
           }}>
@@ -231,10 +241,10 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
 
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
             textAlign: 'center',
           }}>
-            Recibiras un comprobante por email
+            Recibirás un comprobante por email
           </Text>
         </Animated.View>
       </View>
@@ -245,11 +255,11 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.LG,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-            color: COLORS.text,
+            color: colors.text,
             marginBottom: LAYOUT.SPACING.MD,
             textAlign: 'center',
           }}>
-            Resumen de la Transaccion
+            Resumen de la Transacción
           </Text>
 
           <View style={{
@@ -260,14 +270,14 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Presupuesto
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               {quote.quoteNumber}
             </Text>
@@ -281,13 +291,13 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Cliente
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               {quote.customer.name}
             </Text>
@@ -301,13 +311,13 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Fecha del pago
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               {paymentDate.toLocaleDateString('es-AR', {
                 year: 'numeric',
@@ -328,14 +338,14 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
             }}>
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-                color: COLORS.textSecondary,
+                color: colors.textSecondary,
               }}>
-                ID de Transaccion
+                ID de Transacción
               </Text>
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.SM,
                 fontFamily: 'monospace',
-                color: COLORS.textTertiary,
+                color: colors.textTertiary,
               }}>
                 {payment.mercadopagoId}
               </Text>
@@ -348,19 +358,19 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
             alignItems: 'center',
             paddingTop: LAYOUT.SPACING.MD,
             borderTopWidth: 2,
-            borderTopColor: COLORS.success,
+            borderTopColor: colors.success,
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XL,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               Total Pagado
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.success,
+              color: colors.success,
             }}>
               ${payment.amount.toLocaleString('es-AR')}
             </Text>
@@ -372,7 +382,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.LG,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-            color: COLORS.text,
+            color: colors.text,
             marginBottom: LAYOUT.SPACING.MD,
           }}>
             Productos Incluidos
@@ -391,14 +401,14 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-                  color: COLORS.text,
+                  color: colors.text,
                   marginBottom: LAYOUT.SPACING.XS,
                 }}>
                   {item.product.name}
                 </Text>
                 <Text style={{
                   fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-                  color: COLORS.textSecondary,
+                  color: colors.textSecondary,
                 }}>
                   {productService.formatPrice(item.productSnapshot.price)} x {item.quantity}
                 </Text>
@@ -407,7 +417,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.MD,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-                color: COLORS.text,
+                color: colors.text,
               }}>
                 {productService.formatPrice(item.subtotal)}
               </Text>
@@ -417,12 +427,12 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
           {(quote.items?.length || 0) > 3 && (
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textTertiary,
+              color: colors.textTertiary,
               fontStyle: 'italic',
               textAlign: 'center',
               marginTop: LAYOUT.SPACING.SM,
             }}>
-              y {(quote.items?.length || 0) - 3} producto{((quote.items?.length || 0) - 3) !== 1 ? 's' : ''} mas...
+              y {(quote.items?.length || 0) - 3} producto{((quote.items?.length || 0) - 3) !== 1 ? 's' : ''} más...
             </Text>
           )}
         </Card>
@@ -435,14 +445,14 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
             marginBottom: LAYOUT.SPACING.LG,
             backgroundColor: COLORS.successLight + '20',
             borderWidth: 1,
-            borderColor: COLORS.success,
+            borderColor: colors.success,
           }}
         >
           <View style={{ alignItems: 'center' }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.LG,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-              color: COLORS.success,
+              color: colors.success,
               marginBottom: LAYOUT.SPACING.SM,
               textAlign: 'center',
             }}>
@@ -451,7 +461,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.success,
+              color: colors.success,
               textAlign: 'center',
               lineHeight: 22,
             }}>
@@ -467,7 +477,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
             title="Ver Presupuesto Completo"
             onPress={handleViewQuote}
             fullWidth
-            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>{'📋'}</Text>}
+            leftIcon={<MaterialCommunityIcons name="clipboard-text-outline" size={18} color="#FFFFFF" style={{ marginRight: LAYOUT.SPACING.SM }} />}
           />
 
           <Button
@@ -475,7 +485,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
             variant="outline"
             onPress={handleShareReceipt}
             fullWidth
-            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>{'📤'}</Text>}
+            leftIcon={<MaterialCommunityIcons name="share-variant-outline" size={18} color={colors.primary} style={{ marginRight: LAYOUT.SPACING.SM }} />}
           />
 
           <View style={{
@@ -503,7 +513,7 @@ const PaymentSuccessScreen: React.FC<PaymentSuccessScreenProps> = ({ route, navi
         <View style={{ marginTop: LAYOUT.SPACING.XXL }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-            color: COLORS.textTertiary,
+            color: colors.textTertiary,
             textAlign: 'center',
             lineHeight: 18,
           }}>

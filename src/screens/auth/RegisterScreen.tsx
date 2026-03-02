@@ -11,6 +11,7 @@ import {
   Platform,
   TouchableOpacity,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -21,6 +22,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 
 // Context
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 // Types
 import { AuthStackParamList, RegisterFormData } from '../../types';
@@ -47,6 +49,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   // ===============================
 
   const { register, isLoading } = useAuth();
+  const { colors } = useTheme();
 
   // ===============================
   // STATE
@@ -71,36 +74,31 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
   const handleInputChange = (field: keyof RegisterFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
 
-    // Limpiar error del campo cuando el usuario empieza a escribir
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
 
-    // Limpiar error general
     if (generalError) {
       setGeneralError('');
     }
   };
 
   const validateForm = (): boolean => {
-    // Primero usar validación del servicio
     const serviceValidation = validateRegistrationData({
       name: formData.name,
       email: formData.email,
       password: formData.password,
-      role: 'seller', // Default role
+      role: 'seller',
     });
 
     let newErrors = { ...serviceValidation.errors };
 
-    // Validar confirmación de contraseña
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Las contraseñas no coinciden';
+      newErrors.confirmPassword = 'Las Contraseñas no coinciden';
     }
 
-    // Validar que la confirmación no esté vacía
     if (!formData.confirmPassword.trim()) {
-      newErrors.confirmPassword = 'Confirma tu contraseña';
+      newErrors.confirmPassword = 'Confirma tu Contraseña';
     }
 
     setErrors(newErrors);
@@ -117,9 +115,8 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
         name: formData.name.trim(),
         email: formData.email.trim(),
         password: formData.password,
-        role: 'seller', // Default role para nuevos usuarios
+        role: 'seller',
       });
-      // La navegación se maneja automáticamente por AuthContext
     } catch (error: any) {
       console.error('Register error:', error);
       setGeneralError(error.message || 'Error al crear la cuenta');
@@ -148,7 +145,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        style={{ flex: 1, backgroundColor: COLORS.background }}
+        style={{ flex: 1, backgroundColor: colors.background }}
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
@@ -163,19 +160,12 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
             alignItems: 'center',
             marginBottom: LAYOUT.SPACING.XL,
           }}>
-            <Text style={{
-              fontSize: TYPOGRAPHY.FONT_SIZE.XXXL,
-              fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.primary,
-              marginBottom: LAYOUT.SPACING.MD,
-            }}>
-              🚀
-            </Text>
+            <MaterialCommunityIcons name="rocket-launch-outline" size={48} color={colors.primary} style={{ marginBottom: LAYOUT.SPACING.MD }} />
 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.text,
+              color: colors.text,
               textAlign: 'center',
               marginBottom: LAYOUT.SPACING.SM,
             }}>
@@ -184,10 +174,10 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               textAlign: 'center',
             }}>
-              Únete y empieza a gestionar tus presupuestos
+              Unite y empieza a gestionar tus presupuestos
             </Text>
           </View>
 
@@ -214,9 +204,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               autoComplete="name"
               required
               leftIcon={
-                <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                  👤
-                </Text>
+                <MaterialCommunityIcons name="account-outline" size={20} color={colors.textSecondary} />
               }
             />
 
@@ -232,9 +220,7 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               autoComplete="email"
               required
               leftIcon={
-                <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                  📧
-                </Text>
+                <MaterialCommunityIcons name="email-outline" size={20} color={colors.textSecondary} />
               }
             />
 
@@ -249,15 +235,11 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               autoComplete="password-new"
               required
               leftIcon={
-                <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                  🔒
-                </Text>
+                <MaterialCommunityIcons name="lock-outline" size={20} color={colors.textSecondary} />
               }
               rightIcon={
                 <TouchableOpacity onPress={togglePasswordVisibility}>
-                  <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                    {showPassword ? '🙈' : '👁️'}
-                  </Text>
+                  <MaterialCommunityIcons name={showPassword ? "eye-off-outline" : "eye-outline"} size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               }
               onRightIconPress={togglePasswordVisibility}
@@ -266,8 +248,8 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 
             {/* Confirm Password Input */}
             <Input
-              label="Confirmar contraseña"
-              placeholder="Confirma tu contraseña"
+              label="Confirmar Contraseña"
+              placeholder="Confirma tu Contraseña"
               value={formData.confirmPassword}
               onChangeText={(text) => handleInputChange('confirmPassword', text)}
               error={errors.confirmPassword}
@@ -275,15 +257,11 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               autoComplete="password-new"
               required
               leftIcon={
-                <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                  🔒
-                </Text>
+                <MaterialCommunityIcons name="lock-outline" size={20} color={colors.textSecondary} />
               }
               rightIcon={
                 <TouchableOpacity onPress={toggleConfirmPasswordVisibility}>
-                  <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                    {showConfirmPassword ? '🙈' : '👁️'}
-                  </Text>
+                  <MaterialCommunityIcons name={showConfirmPassword ? "eye-off-outline" : "eye-outline"} size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               }
               onRightIconPress={toggleConfirmPasswordVisibility}
@@ -291,23 +269,23 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
 
             {/* Terms Notice */}
             <View style={{
-              backgroundColor: COLORS.backgroundSecondary,
+              backgroundColor: colors.backgroundSecondary,
               padding: LAYOUT.SPACING.MD,
               borderRadius: LAYOUT.BORDER_RADIUS.MD,
               marginTop: LAYOUT.SPACING.SM,
             }}>
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-                color: COLORS.textSecondary,
+                color: colors.textSecondary,
                 textAlign: 'center',
                 lineHeight: 18,
               }}>
                 Al crear una cuenta aceptas nuestros{' '}
-                <Text style={{ color: COLORS.primary, fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM }}>
+                <Text style={{ color: colors.primary, fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM }}>
                   Términos y Condiciones
                 </Text>
                 {' '}y{' '}
-                <Text style={{ color: COLORS.primary, fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM }}>
+                <Text style={{ color: colors.primary, fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM }}>
                   Política de Privacidad
                 </Text>
               </Text>
@@ -320,7 +298,14 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
               loading={isLoading}
               disabled={isLoading}
               fullWidth
-              style={{ marginTop: LAYOUT.SPACING.LG }}
+              style={{
+                marginTop: LAYOUT.SPACING.LG,
+                shadowColor: COLORS.primary,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.2,
+                shadowRadius: 5.25,
+                elevation: 5,
+              }}
             />
           </Card>
 
@@ -334,14 +319,14 @@ const RegisterScreen: React.FC<RegisterScreenProps> = ({ navigation }) => {
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               ¿Ya tienes cuenta?{' '}
             </Text>
             <TouchableOpacity onPress={handleLoginPress}>
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-                color: COLORS.primary,
+                color: colors.primary,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
               }}>
                 Iniciar sesión

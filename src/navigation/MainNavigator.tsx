@@ -6,9 +6,11 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity, Text, View } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 // Context
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 // Screens - Products
 import ProductListScreen from '../screens/products/ProductListScreen';
@@ -35,7 +37,7 @@ import {
 } from '../types';
 
 // Constants
-import { COLORS, LAYOUT, TYPOGRAPHY } from '../constants/config';
+import { LAYOUT, TYPOGRAPHY } from '../constants/config';
 
 // ===============================
 // NAVIGATORS
@@ -46,41 +48,38 @@ const ProductStack = createStackNavigator<ProductStackParamList>();
 const QuoteStack = createStackNavigator<QuoteStackParamList>();
 
 // ===============================
-// COMMON HEADER STYLES
-// ===============================
-
-const commonHeaderOptions = {
-  headerStyle: {
-    backgroundColor: COLORS.background,
-    shadowColor: 'transparent',
-    elevation: 0,
-    borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
-  },
-  headerTitleStyle: {
-    fontSize: TYPOGRAPHY.FONT_SIZE.LG,
-    fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-    color: COLORS.text,
-  },
-  headerBackTitleVisible: false,
-  headerTintColor: COLORS.primary,
-  cardStyle: {
-    backgroundColor: COLORS.background,
-  },
-};
-
-// ===============================
 // PRODUCT STACK NAVIGATOR
 // ===============================
 
 const ProductStackNavigator: React.FC = () => {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const canManageProducts = user?.role === 'admin' || user?.role === 'seller';
+
+  const headerOptions = {
+    headerStyle: {
+      backgroundColor: colors.background,
+      shadowColor: 'transparent',
+      elevation: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    headerTitleStyle: {
+      fontSize: TYPOGRAPHY.FONT_SIZE.LG,
+      fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
+      color: colors.text,
+    },
+    headerBackTitleVisible: false,
+    headerTintColor: colors.primary,
+    cardStyle: {
+      backgroundColor: colors.background,
+    },
+  };
 
   return (
     <ProductStack.Navigator
       initialRouteName="ProductList"
-      screenOptions={commonHeaderOptions}
+      screenOptions={headerOptions}
     >
       <ProductStack.Screen
         name="ProductList"
@@ -92,19 +91,22 @@ const ProductStackNavigator: React.FC = () => {
               onPress={() => navigation.navigate('ProductForm' as any)}
               style={{
                 marginRight: LAYOUT.SPACING.MD,
-                backgroundColor: COLORS.primary,
+                backgroundColor: colors.primary,
                 paddingHorizontal: LAYOUT.SPACING.MD,
                 paddingVertical: LAYOUT.SPACING.SM,
                 borderRadius: LAYOUT.BORDER_RADIUS.MD,
               }}
             >
-              <Text style={{
-                color: COLORS.background,
-                fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-                fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-              }}>
-                + Nuevo
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialCommunityIcons name="plus" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
+                <Text style={{
+                  color: '#FFFFFF',
+                  fontSize: TYPOGRAPHY.FONT_SIZE.SM,
+                  fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
+                }}>
+                  Nuevo
+                </Text>
+              </View>
             </TouchableOpacity>
           ) : null,
         })}
@@ -126,7 +128,7 @@ const ProductStackNavigator: React.FC = () => {
               }}
             >
               <Text style={{
-                color: COLORS.primary,
+                color: colors.primary,
                 fontSize: TYPOGRAPHY.FONT_SIZE.MD,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
               }}>
@@ -154,12 +156,33 @@ const ProductStackNavigator: React.FC = () => {
 
 const QuoteStackNavigator: React.FC = () => {
   const { user } = useAuth();
+  const { colors } = useTheme();
   const canManageQuotes = user?.role === 'admin' || user?.role === 'seller';
+
+  const headerOptions = {
+    headerStyle: {
+      backgroundColor: colors.background,
+      shadowColor: 'transparent',
+      elevation: 0,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    headerTitleStyle: {
+      fontSize: TYPOGRAPHY.FONT_SIZE.LG,
+      fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
+      color: colors.text,
+    },
+    headerBackTitleVisible: false,
+    headerTintColor: colors.primary,
+    cardStyle: {
+      backgroundColor: colors.background,
+    },
+  };
 
   return (
     <QuoteStack.Navigator
       initialRouteName="QuoteList"
-      screenOptions={commonHeaderOptions}
+      screenOptions={headerOptions}
     >
       <QuoteStack.Screen
         name="QuoteList"
@@ -171,19 +194,22 @@ const QuoteStackNavigator: React.FC = () => {
               onPress={() => navigation.navigate('CreateQuote')}
               style={{
                 marginRight: LAYOUT.SPACING.MD,
-                backgroundColor: COLORS.primary,
+                backgroundColor: colors.primary,
                 paddingHorizontal: LAYOUT.SPACING.MD,
                 paddingVertical: LAYOUT.SPACING.SM,
                 borderRadius: LAYOUT.BORDER_RADIUS.MD,
               }}
             >
-              <Text style={{
-                color: COLORS.background,
-                fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-                fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-              }}>
-                + Nuevo
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <MaterialCommunityIcons name="plus" size={16} color="#FFFFFF" style={{ marginRight: 4 }} />
+                <Text style={{
+                  color: '#FFFFFF',
+                  fontSize: TYPOGRAPHY.FONT_SIZE.SM,
+                  fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
+                }}>
+                  Nuevo
+                </Text>
+              </View>
             </TouchableOpacity>
           ) : null,
         })}
@@ -219,7 +245,7 @@ const QuoteStackNavigator: React.FC = () => {
         component={PaymentSuccessScreen}
         options={{
           title: 'Pago Exitoso',
-          headerLeft: () => null, // Prevenir volver atrás
+          headerLeft: () => null, // Prevenir volver atras
         }}
       />
     </QuoteStack.Navigator>
@@ -233,16 +259,17 @@ const QuoteStackNavigator: React.FC = () => {
 interface TabBarIconProps {
   focused: boolean;
   iconName: string;
+  color: string;
 }
 
-const TabBarIcon: React.FC<TabBarIconProps> = ({ focused, iconName }) => {
-  const getIconSymbol = (name: string): string => {
+const TabBarIcon: React.FC<TabBarIconProps> = ({ focused, iconName, color }) => {
+  const getIconName = (name: string): string => {
     const iconMap: Record<string, string> = {
-      products: '📦',
-      quotes: '📋',
-      profile: '👤',
+      products: 'package-variant',
+      quotes: 'clipboard-text-outline',
+      profile: 'account-outline',
     };
-    return iconMap[name] || '❓';
+    return iconMap[name] || 'help-circle-outline';
   };
 
   return (
@@ -250,12 +277,12 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({ focused, iconName }) => {
       alignItems: 'center',
       justifyContent: 'center',
     }}>
-      <Text style={{
-        fontSize: 24,
-        opacity: focused ? 1 : 0.6,
-      }}>
-        {getIconSymbol(iconName)}
-      </Text>
+      <MaterialCommunityIcons
+        name={getIconName(iconName) as any}
+        size={24}
+        color={color}
+        style={{ opacity: focused ? 1 : 0.6 }}
+      />
     </View>
   );
 };
@@ -266,21 +293,22 @@ const TabBarIcon: React.FC<TabBarIconProps> = ({ focused, iconName }) => {
 
 const MainNavigator: React.FC = () => {
   const { user } = useAuth();
+  const { colors } = useTheme();
 
   return (
     <Tab.Navigator
       initialRouteName="Products"
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: COLORS.background,
-          borderTopColor: COLORS.border,
+          backgroundColor: colors.background,
+          borderTopColor: colors.border,
           borderTopWidth: 1,
           height: LAYOUT.TAB_BAR_HEIGHT,
           paddingBottom: LAYOUT.SPACING.SM,
           paddingTop: LAYOUT.SPACING.SM,
         },
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textSecondary,
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textSecondary,
         tabBarLabelStyle: {
           fontSize: TYPOGRAPHY.FONT_SIZE.XS,
           fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
@@ -293,8 +321,8 @@ const MainNavigator: React.FC = () => {
         component={ProductStackNavigator}
         options={{
           title: 'Productos',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} iconName="products" />
+          tabBarIcon: ({ focused, color }) => (
+            <TabBarIcon focused={focused} iconName="products" color={color} />
           ),
         }}
       />
@@ -304,8 +332,8 @@ const MainNavigator: React.FC = () => {
         component={QuoteStackNavigator}
         options={{
           title: 'Presupuestos',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} iconName="quotes" />
+          tabBarIcon: ({ focused, color }) => (
+            <TabBarIcon focused={focused} iconName="quotes" color={color} />
           ),
         }}
       />
@@ -315,8 +343,8 @@ const MainNavigator: React.FC = () => {
         component={ProfileScreen}
         options={{
           title: 'Perfil',
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon focused={focused} iconName="profile" />
+          tabBarIcon: ({ focused, color }) => (
+            <TabBarIcon focused={focused} iconName="profile" color={color} />
           ),
         }}
       />

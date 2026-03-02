@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -22,6 +23,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 
 // Context
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 // Types
 import { AuthStackParamList, LoginFormData } from '../../types';
@@ -48,6 +50,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   // ===============================
 
   const { login, isLoading } = useAuth();
+  const { colors } = useTheme();
 
   // ===============================
   // STATE
@@ -69,12 +72,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const handleInputChange = (field: keyof LoginFormData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
 
-    // Limpiar error del campo cuando el usuario empieza a escribir
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
 
-    // Limpiar error general
     if (generalError) {
       setGeneralError('');
     }
@@ -83,18 +84,16 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Validar email
     if (!formData.email.trim()) {
       newErrors.email = 'El email es requerido';
     } else if (!validateEmail(formData.email)) {
       newErrors.email = 'El email no es válido';
     }
 
-    // Validar password
     if (!formData.password.trim()) {
-      newErrors.password = 'La contraseña es requerida';
+      newErrors.password = 'La Contraseña es requerida';
     } else if (formData.password.length < 6) {
-      newErrors.password = 'La contraseña debe tener al menos 6 caracteres';
+      newErrors.password = 'La Contraseña debe tener al menos 6 caracteres';
     }
 
     setErrors(newErrors);
@@ -108,7 +107,6 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
     try {
       await login(formData.email.trim(), formData.password);
-      // La navegación se maneja automáticamente por AuthContext
     } catch (error: any) {
       console.error('Login error:', error);
       setGeneralError(error.message || 'Error al iniciar sesión');
@@ -133,7 +131,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        style={{ flex: 1, backgroundColor: COLORS.background }}
+        style={{ flex: 1, backgroundColor: colors.background }}
         contentContainerStyle={{ flexGrow: 1 }}
         keyboardShouldPersistTaps="handled"
       >
@@ -147,19 +145,12 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             alignItems: 'center',
             marginBottom: LAYOUT.SPACING.XXL,
           }}>
-            <Text style={{
-              fontSize: TYPOGRAPHY.FONT_SIZE.XXXL,
-              fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.primary,
-              marginBottom: LAYOUT.SPACING.MD,
-            }}>
-              📋
-            </Text>
+            <MaterialCommunityIcons name="clipboard-text-outline" size={48} color={colors.primary} style={{ marginBottom: LAYOUT.SPACING.MD }} />
 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.text,
+              color: colors.text,
               textAlign: 'center',
               marginBottom: LAYOUT.SPACING.SM,
             }}>
@@ -168,7 +159,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               textAlign: 'center',
             }}>
               Inicia sesión para acceder a tu cuenta
@@ -199,16 +190,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               autoComplete="email"
               required
               leftIcon={
-                <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                  📧
-                </Text>
+                <MaterialCommunityIcons name="email-outline" size={20} color={colors.textSecondary} />
               }
             />
 
             {/* Password Input */}
             <Input
               label="Contraseña"
-              placeholder="Tu contraseña"
+              placeholder="Tu Contraseña"
               value={formData.password}
               onChangeText={(text) => handleInputChange('password', text)}
               error={errors.password}
@@ -216,15 +205,11 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               autoComplete="password"
               required
               leftIcon={
-                <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                  🔒
-                </Text>
+                <MaterialCommunityIcons name="lock-outline" size={20} color={colors.textSecondary} />
               }
               rightIcon={
                 <TouchableOpacity onPress={togglePasswordVisibility}>
-                  <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                    {showPassword ? '🙈' : '👁️'}
-                  </Text>
+                  <MaterialCommunityIcons name={showPassword ? "eye-off-outline" : "eye-outline"} size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               }
               onRightIconPress={togglePasswordVisibility}
@@ -237,7 +222,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               loading={isLoading}
               disabled={isLoading}
               fullWidth
-              style={{ marginTop: LAYOUT.SPACING.MD }}
+              style={{
+                marginTop: LAYOUT.SPACING.MD,
+                shadowColor: COLORS.primary,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.2,
+                shadowRadius: 5.25,
+                elevation: 5,
+              }}
             />
 
             {/* Forgot Password Link */}
@@ -250,10 +242,10 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
             >
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-                color: COLORS.primary,
+                color: colors.primary,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
               }}>
-                ¿Olvidaste tu contraseña?
+                ¿Olvidaste tu Contraseña?
               </Text>
             </TouchableOpacity>
           </Card>
@@ -267,14 +259,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               ¿No tienes cuenta?{' '}
             </Text>
             <TouchableOpacity onPress={handleRegisterPress}>
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-                color: COLORS.primary,
+                color: colors.primary,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
               }}>
                 Crear cuenta
@@ -292,14 +284,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ navigation }) => {
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.SM,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-                color: COLORS.textSecondary,
+                color: colors.textSecondary,
                 marginBottom: LAYOUT.SPACING.SM,
               }}>
                 Credenciales de prueba:
               </Text>
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-                color: COLORS.textSecondary,
+                color: colors.textSecondary,
                 lineHeight: 18,
               }}>
                 Email: admin@test.com{'\n'}

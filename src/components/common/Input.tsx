@@ -16,6 +16,9 @@ import {
 // Constants
 import { COLORS, LAYOUT, TYPOGRAPHY } from '../../constants/config';
 
+// Theme
+import { useTheme } from '../../context/ThemeContext';
+
 // ===============================
 // TYPES
 // ===============================
@@ -67,6 +70,8 @@ const Input = forwardRef<TextInput, InputProps>(({
   onBlur,
   ...props
 }, ref) => {
+  const { colors } = useTheme();
+
   // ===============================
   // STATE
   // ===============================
@@ -107,7 +112,7 @@ const Input = forwardRef<TextInput, InputProps>(({
     const baseStyle: TextStyle = {
       marginBottom: LAYOUT.SPACING.XS,
       fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-      color: COLORS.text,
+      color: colors.text,
     };
 
     const sizeStyles: Record<InputSize, TextStyle> = {
@@ -152,27 +157,27 @@ const Input = forwardRef<TextInput, InputProps>(({
     // Variant styles
     const variantStyles: Record<InputVariant, ViewStyle> = {
       default: {
-        backgroundColor: COLORS.background,
-        borderColor: COLORS.border,
+        backgroundColor: colors.background,
+        borderColor: colors.border,
       },
       outline: {
-        backgroundColor: COLORS.background,
-        borderColor: isFocused ? COLORS.primary : COLORS.border,
+        backgroundColor: colors.background,
+        borderColor: isFocused ? colors.primary : colors.border,
       },
       filled: {
-        backgroundColor: COLORS.backgroundSecondary,
-        borderColor: isFocused ? COLORS.primary : 'transparent',
+        backgroundColor: colors.backgroundSecondary,
+        borderColor: isFocused ? colors.primary : 'transparent',
       },
     };
 
     // Error styles
-    const errorStyle: ViewStyle = error ? {
-      borderColor: COLORS.error,
+    const errorStyles: ViewStyle = error ? {
+      borderColor: colors.error,
     } : {};
 
     // Disabled styles
     const disabledStyle: ViewStyle = disabled ? {
-      backgroundColor: COLORS.backgroundSecondary,
+      backgroundColor: colors.backgroundSecondary,
       opacity: 0.6,
     } : {};
 
@@ -180,7 +185,7 @@ const Input = forwardRef<TextInput, InputProps>(({
       ...baseStyle,
       ...sizeStyles[size],
       ...variantStyles[variant],
-      ...errorStyle,
+      ...errorStyles,
       ...disabledStyle,
     };
   };
@@ -188,7 +193,7 @@ const Input = forwardRef<TextInput, InputProps>(({
   const getInputStyles = (): TextStyle => {
     const baseStyle: TextStyle = {
       flex: 1,
-      color: COLORS.text,
+      color: colors.text,
       fontWeight: TYPOGRAPHY.FONT_WEIGHT.REGULAR,
     };
 
@@ -199,7 +204,7 @@ const Input = forwardRef<TextInput, InputProps>(({
     };
 
     const disabledStyle: TextStyle = disabled ? {
-      color: COLORS.textDisabled,
+      color: colors.textDisabled,
     } : {};
 
     return {
@@ -220,14 +225,14 @@ const Input = forwardRef<TextInput, InputProps>(({
   const getErrorStyles = (): TextStyle => {
     return {
       ...getMessageStyles(),
-      color: COLORS.error,
+      color: colors.error,
     };
   };
 
   const getHelperStyles = (): TextStyle => {
     return {
       ...getMessageStyles(),
-      color: COLORS.textSecondary,
+      color: colors.textSecondary,
     };
   };
 
@@ -242,7 +247,7 @@ const Input = forwardRef<TextInput, InputProps>(({
         <Text style={[getLabelStyles(), labelStyle]}>
           {label}
           {required && (
-            <Text style={{ color: COLORS.error }}> *</Text>
+            <Text style={{ color: colors.error }}> *</Text>
           )}
         </Text>
       )}
@@ -264,8 +269,8 @@ const Input = forwardRef<TextInput, InputProps>(({
           onFocus={handleFocus}
           onBlur={handleBlur}
           editable={!disabled}
-          placeholderTextColor={COLORS.textSecondary}
-          selectionColor={COLORS.primary}
+          placeholderTextColor={colors.textSecondary}
+          selectionColor={colors.primary}
           {...props}
         />
 

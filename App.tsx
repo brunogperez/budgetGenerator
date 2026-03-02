@@ -17,6 +17,7 @@ console.error = (...args) => {
 
 // Context Providers
 import { AuthProvider } from './src/context/AuthContext';
+import { ThemeProvider } from './src/context/ThemeContext';
 
 // Navigation
 import AppNavigator from './src/navigation/AppNavigator';
@@ -27,10 +28,12 @@ import AppNavigator from './src/navigation/AppNavigator';
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <StatusBar style="auto" />
-      <AppNavigator />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <StatusBar style="auto" />
+        <AppNavigator />
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

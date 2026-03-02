@@ -11,6 +11,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -29,6 +30,9 @@ import { Product, ProductStackParamList, CreateProductRequest, ProductFormData }
 // Constants
 import { COLORS, LAYOUT, TYPOGRAPHY } from '../../constants/config';
 
+// Theme
+import { useTheme } from '../../context/ThemeContext';
+
 // ===============================
 // TYPES
 // ===============================
@@ -40,6 +44,8 @@ type ProductFormScreenProps = StackScreenProps<ProductStackParamList, 'ProductFo
 // ===============================
 
 const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation }) => {
+  const { colors } = useTheme();
+
   // ===============================
   // PARAMS
   // ===============================
@@ -221,7 +227,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
-        style={{ flex: 1, backgroundColor: COLORS.background }}
+        style={{ flex: 1, backgroundColor: colors.background }}
         contentContainerStyle={{ padding: LAYOUT.SPACING.LG }}
         keyboardShouldPersistTaps="handled"
       >
@@ -231,7 +237,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XL,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.text,
+              color: colors.text,
               textAlign: 'center',
               marginBottom: LAYOUT.SPACING.SM,
             }}>
@@ -239,7 +245,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               textAlign: 'center',
             }}>
               {isEditing ? 'Modifica los datos del producto' : 'Completa la información del producto'}
@@ -265,9 +271,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
             error={errors.name}
             required
             leftIcon={
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                📦
-              </Text>
+              <MaterialCommunityIcons name="package-variant" size={20} color={colors.textSecondary} />
             }
           />
 
@@ -283,9 +287,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
             numberOfLines={3}
             style={{ textAlignVertical: 'top' }}
             leftIcon={
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary, marginTop: LAYOUT.SPACING.SM }}>
-                📝
-              </Text>
+              <MaterialCommunityIcons name="note-text-outline" size={20} color={colors.textSecondary} style={{ marginTop: LAYOUT.SPACING.SM }} />
             }
           />
 
@@ -301,9 +303,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
                 keyboardType="numeric"
                 required
                 leftIcon={
-                  <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                    💰
-                  </Text>
+                  <MaterialCommunityIcons name="currency-usd" size={20} color={colors.textSecondary} />
                 }
               />
             </View>
@@ -318,9 +318,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
                 keyboardType="numeric"
                 required
                 leftIcon={
-                  <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                    📊
-                  </Text>
+                  <MaterialCommunityIcons name="chart-bar" size={20} color={colors.textSecondary} />
                 }
               />
             </View>
@@ -335,9 +333,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
             error={errors.category}
             required
             leftIcon={
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                🏷️
-              </Text>
+              <MaterialCommunityIcons name="tag-outline" size={20} color={colors.textSecondary} />
             }
           />
 
@@ -346,7 +342,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
             <View style={{ marginBottom: LAYOUT.SPACING.MD }}>
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-                color: COLORS.textSecondary,
+                color: colors.textSecondary,
                 marginBottom: LAYOUT.SPACING.SM,
               }}>
                 Categorías populares:
@@ -360,8 +356,8 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
                     size="sm"
                     onPress={() => handleInputChange('category', category)}
                     style={{
-                      backgroundColor: formData.category === category ? COLORS.primaryLight + '20' : COLORS.backgroundSecondary,
-                      borderColor: formData.category === category ? COLORS.primary : COLORS.border,
+                      backgroundColor: formData.category === category ? COLORS.primaryLight + '20' : colors.backgroundSecondary,
+                      borderColor: formData.category === category ? colors.primary : colors.border,
                     }}
                   />
                 ))}
@@ -377,9 +373,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
             onChangeText={(text) => handleInputChange('sku', text)}
             error={errors.sku}
             leftIcon={
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                🏷️
-              </Text>
+              <MaterialCommunityIcons name="tag-outline" size={20} color={colors.textSecondary} />
             }
             rightIcon={
               <Button
@@ -403,9 +397,7 @@ const ProductFormScreen: React.FC<ProductFormScreenProps> = ({ route, navigation
             keyboardType="url"
             autoCapitalize="none"
             leftIcon={
-              <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>
-                🖼️
-              </Text>
+              <MaterialCommunityIcons name="image-outline" size={20} color={colors.textSecondary} />
             }
           />
 

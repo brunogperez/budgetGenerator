@@ -10,6 +10,7 @@ import {
   TouchableOpacity,
   Alert,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { StackScreenProps } from '@react-navigation/stack';
 
 // Components
@@ -20,6 +21,7 @@ import ErrorMessage from '../../components/common/ErrorMessage';
 
 // Context
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 
 // Services
 import * as productService from '../../services/productService';
@@ -52,6 +54,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
   // ===============================
 
   const { user } = useAuth();
+  const { colors } = useTheme();
 
   // ===============================
   // STATE
@@ -155,7 +158,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
 
   if (error || !product) {
     return (
-      <View style={{ flex: 1, backgroundColor: COLORS.background }}>
+      <View style={{ flex: 1, backgroundColor: colors.background }}>
         <ErrorMessage
           message={error || 'Producto no encontrado'}
           variant="card"
@@ -174,7 +177,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: COLORS.background }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: LAYOUT.SPACING.LG }}
     >
       {/* Product Image Placeholder */}
@@ -183,14 +186,14 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
           alignItems: 'center',
           justifyContent: 'center',
           height: 200,
-          backgroundColor: COLORS.backgroundSecondary,
+          backgroundColor: colors.backgroundSecondary,
           borderRadius: LAYOUT.BORDER_RADIUS.LG,
         }}>
-          <Text style={{ fontSize: 64 }}>📦</Text>
+          <MaterialCommunityIcons name="package-variant" size={64} color={colors.textSecondary} />
           {product.imageUrl && (
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               marginTop: LAYOUT.SPACING.SM,
             }}>
               Imagen disponible
@@ -204,7 +207,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
           fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-          color: COLORS.text,
+          color: colors.text,
           marginBottom: LAYOUT.SPACING.SM,
         }}>
           {product.name}
@@ -212,7 +215,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
 
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-          color: COLORS.textSecondary,
+          color: colors.textSecondary,
           lineHeight: 22,
           marginBottom: LAYOUT.SPACING.LG,
         }}>
@@ -228,14 +231,14 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
           }}>
             Precio
           </Text>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-            color: COLORS.primary,
+            color: colors.primary,
           }}>
             {productService.formatPrice(product.price)}
           </Text>
@@ -250,7 +253,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.textSecondary,
+            color: colors.textSecondary,
           }}>
             Stock disponible
           </Text>
@@ -282,19 +285,19 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Categoría
             </Text>
             <View style={{
-              backgroundColor: COLORS.backgroundSecondary,
+              backgroundColor: colors.backgroundSecondary,
               paddingHorizontal: LAYOUT.SPACING.MD,
               paddingVertical: LAYOUT.SPACING.SM,
               borderRadius: LAYOUT.BORDER_RADIUS.MD,
             }}>
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-                color: COLORS.text,
+                color: colors.text,
               }}>
                 {product.category}
               </Text>
@@ -312,14 +315,14 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               SKU
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
               fontFamily: 'monospace',
-              color: COLORS.text,
+              color: colors.text,
             }}>
               {product.sku}
             </Text>
@@ -334,17 +337,17 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
             alignItems: 'center',
             paddingTop: LAYOUT.SPACING.MD,
             borderTopWidth: 1,
-            borderTopColor: COLORS.border,
+            borderTopColor: colors.border,
           }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               Creado el
             </Text>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
             }}>
               {new Date(product.createdAt).toLocaleDateString('es-AR', {
                 year: 'numeric',
@@ -365,17 +368,19 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
             marginBottom: LAYOUT.SPACING.LG,
             backgroundColor: COLORS.warningLight + '20',
             borderWidth: 1,
-            borderColor: COLORS.warning,
+            borderColor: colors.warning,
           }}
         >
-          <Text style={{
-            fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.warning,
-            fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-            textAlign: 'center',
-          }}>
-            ⚠️ Stock bajo: Solo quedan {product.stock} unidades
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <MaterialCommunityIcons name="alert-outline" size={20} color={colors.warning} style={{ marginRight: 8 }} />
+            <Text style={{
+              fontSize: TYPOGRAPHY.FONT_SIZE.MD,
+              color: colors.warning,
+              fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
+            }}>
+              Stock bajo: Solo quedan {product.stock} unidades
+            </Text>
+          </View>
         </Card>
       )}
 
@@ -388,17 +393,19 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
             marginBottom: LAYOUT.SPACING.LG,
             backgroundColor: COLORS.errorLight + '20',
             borderWidth: 1,
-            borderColor: COLORS.error,
+            borderColor: colors.error,
           }}
         >
-          <Text style={{
-            fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-            color: COLORS.error,
-            fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-            textAlign: 'center',
-          }}>
-            ❌ Producto sin stock
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <MaterialCommunityIcons name="close-circle-outline" size={20} color={colors.error} style={{ marginRight: 8 }} />
+            <Text style={{
+              fontSize: TYPOGRAPHY.FONT_SIZE.MD,
+              color: colors.error,
+              fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
+            }}>
+              Producto sin stock
+            </Text>
+          </View>
         </Card>
       )}
 
@@ -410,7 +417,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
             title="Agregar a Presupuesto"
             onPress={handleAddToQuote}
             fullWidth
-            leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>📋</Text>}
+            leftIcon={<MaterialCommunityIcons name="clipboard-text-outline" size={18} color="#FFFFFF" style={{ marginRight: LAYOUT.SPACING.SM }} />}
           />
         )}
 
@@ -422,7 +429,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
               variant="outline"
               onPress={handleEditProduct}
               fullWidth
-              leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>✏️</Text>}
+              leftIcon={<MaterialCommunityIcons name="pencil-outline" size={18} color={colors.primary} style={{ marginRight: LAYOUT.SPACING.SM }} />}
             />
 
             <Button
@@ -432,7 +439,7 @@ const ProductDetailScreen: React.FC<ProductDetailScreenProps> = ({ route, naviga
               loading={isDeleting}
               disabled={isDeleting}
               fullWidth
-              leftIcon={<Text style={{ fontSize: 16, marginRight: LAYOUT.SPACING.SM }}>🗑️</Text>}
+              leftIcon={<MaterialCommunityIcons name="delete-outline" size={18} color="#FFFFFF" style={{ marginRight: LAYOUT.SPACING.SM }} />}
             />
           </View>
         )}

@@ -13,7 +13,10 @@ import {
 } from 'react-native';
 
 // Constants
-import { COLORS, LAYOUT, TYPOGRAPHY } from '../../constants/config';
+import { LAYOUT, TYPOGRAPHY } from '../../constants/config';
+
+// Theme
+import { useTheme } from '../../context/ThemeContext';
 
 // ===============================
 // TYPES
@@ -53,6 +56,8 @@ const Button: React.FC<ButtonProps> = ({
   onPress,
   ...props
 }) => {
+  const { colors } = useTheme();
+
   // ===============================
   // STYLES
   // ===============================
@@ -88,24 +93,24 @@ const Button: React.FC<ButtonProps> = ({
     // Variant styles
     const variantStyles: Record<ButtonVariant, ViewStyle> = {
       primary: {
-        backgroundColor: COLORS.primary,
-        borderColor: COLORS.primary,
+        backgroundColor: colors.primary,
+        borderColor: colors.primary,
       },
       secondary: {
-        backgroundColor: COLORS.secondary,
-        borderColor: COLORS.secondary,
+        backgroundColor: colors.info,
+        borderColor: colors.info,
       },
       outline: {
         backgroundColor: 'transparent',
-        borderColor: COLORS.primary,
+        borderColor: colors.primary,
       },
       ghost: {
         backgroundColor: 'transparent',
         borderColor: 'transparent',
       },
       danger: {
-        backgroundColor: COLORS.error,
-        borderColor: COLORS.error,
+        backgroundColor: colors.error,
+        borderColor: colors.error,
       },
     };
 
@@ -150,19 +155,19 @@ const Button: React.FC<ButtonProps> = ({
     // Variant styles
     const variantStyles: Record<ButtonVariant, TextStyle> = {
       primary: {
-        color: COLORS.background,
+        color: '#FFFFFF',
       },
       secondary: {
-        color: COLORS.background,
+        color: '#FFFFFF',
       },
       outline: {
-        color: COLORS.primary,
+        color: colors.primary,
       },
       ghost: {
-        color: COLORS.primary,
+        color: colors.primary,
       },
       danger: {
-        color: COLORS.background,
+        color: '#FFFFFF',
       },
     };
 
@@ -204,7 +209,7 @@ const Button: React.FC<ButtonProps> = ({
       {loading && (
         <ActivityIndicator
           size="small"
-          color={variant === 'outline' || variant === 'ghost' ? COLORS.primary : COLORS.background}
+          color={variant === 'outline' || variant === 'ghost' ? colors.primary : '#FFFFFF'}
           style={{ marginRight: leftIcon || rightIcon ? LAYOUT.SPACING.SM : 0 }}
         />
       )}

@@ -11,7 +11,10 @@ import {
 } from 'react-native';
 
 // Constants
-import { COLORS, LAYOUT } from '../../constants/config';
+import { LAYOUT } from '../../constants/config';
+
+// Theme
+import { useTheme } from '../../context/ThemeContext';
 
 // ===============================
 // TYPES
@@ -42,6 +45,8 @@ const Card: React.FC<CardProps> = ({
   style,
   ...props
 }) => {
+  const { colors } = useTheme();
+
   // ===============================
   // STYLES
   // ===============================
@@ -49,32 +54,32 @@ const Card: React.FC<CardProps> = ({
   const getCardStyles = (): ViewStyle => {
     const baseStyle: ViewStyle = {
       borderRadius: LAYOUT.BORDER_RADIUS.LG,
-      backgroundColor: COLORS.surface,
+      backgroundColor: colors.surface,
     };
 
     // Variant styles
     const variantStyles: Record<CardVariant, ViewStyle> = {
       default: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: colors.surface,
       },
       elevated: {
-        backgroundColor: COLORS.surface,
-        shadowColor: COLORS.text,
+        backgroundColor: colors.surface,
+        shadowColor: '#000',
         shadowOffset: {
           width: 0,
-          height: 2,
+          height: 1,
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
+        shadowOpacity: 0.05,
+        shadowRadius: 1.75,
         elevation: 4,
       },
       outlined: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: colors.border,
       },
       filled: {
-        backgroundColor: COLORS.backgroundSecondary,
+        backgroundColor: colors.backgroundSecondary,
       },
     };
 

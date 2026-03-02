@@ -9,7 +9,9 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Switch,
 } from 'react-native';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 
 // Components
 import Card from '../components/common/Card';
@@ -18,6 +20,7 @@ import Loading from '../components/common/Loading';
 
 // Context
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 
 // Constants
 import { COLORS, LAYOUT, TYPOGRAPHY } from '../constants/config';
@@ -35,6 +38,7 @@ const ProfileScreen: React.FC = () => {
   // ===============================
 
   const { user, logout, isLoading } = useAuth();
+  const { isDark, toggleTheme, colors } = useTheme();
 
   // ===============================
   // STATE
@@ -112,7 +116,7 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: COLORS.background }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       contentContainerStyle={{ padding: LAYOUT.SPACING.LG }}
     >
       {/* User Header Card */}
@@ -126,7 +130,7 @@ const ProfileScreen: React.FC = () => {
             width: 80,
             height: 80,
             borderRadius: 40,
-            backgroundColor: COLORS.primary,
+            backgroundColor: colors.primary,
             alignItems: 'center',
             justifyContent: 'center',
             marginRight: LAYOUT.SPACING.MD,
@@ -134,7 +138,7 @@ const ProfileScreen: React.FC = () => {
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.XXL,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.background,
+              color: '#FFFFFF',
             }}>
               {getUserInitials(user)}
             </Text>
@@ -145,7 +149,7 @@ const ProfileScreen: React.FC = () => {
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.LG,
               fontWeight: TYPOGRAPHY.FONT_WEIGHT.BOLD,
-              color: COLORS.text,
+              color: colors.text,
               marginBottom: LAYOUT.SPACING.XS,
             }}>
               {user.name}
@@ -153,7 +157,7 @@ const ProfileScreen: React.FC = () => {
 
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.textSecondary,
+              color: colors.textSecondary,
               marginBottom: LAYOUT.SPACING.XS,
             }}>
               {user.email}
@@ -169,7 +173,7 @@ const ProfileScreen: React.FC = () => {
               <Text style={{
                 fontSize: TYPOGRAPHY.FONT_SIZE.SM,
                 fontWeight: TYPOGRAPHY.FONT_WEIGHT.MEDIUM,
-                color: COLORS.primary,
+                color: colors.primary,
               }}>
                 {formatUserRole(user.role)}
               </Text>
@@ -183,7 +187,7 @@ const ProfileScreen: React.FC = () => {
               padding: LAYOUT.SPACING.SM,
             }}
           >
-            <Text style={{ fontSize: 20 }}>✏️</Text>
+            <MaterialCommunityIcons name="pencil-outline" size={22} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
       </Card>
@@ -194,12 +198,12 @@ const ProfileScreen: React.FC = () => {
           paddingHorizontal: LAYOUT.SPACING.LG,
           paddingVertical: LAYOUT.SPACING.MD,
           borderBottomWidth: 1,
-          borderBottomColor: COLORS.border,
+          borderBottomColor: colors.border,
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-            color: COLORS.text,
+            color: colors.text,
           }}>
             Cuenta
           </Text>
@@ -213,20 +217,20 @@ const ProfileScreen: React.FC = () => {
             paddingHorizontal: LAYOUT.SPACING.LG,
             paddingVertical: LAYOUT.SPACING.MD,
             borderBottomWidth: 1,
-            borderBottomColor: COLORS.border,
+            borderBottomColor: colors.border,
           }}
           onPress={handleEditProfile}
         >
-          <Text style={{ fontSize: 20, marginRight: LAYOUT.SPACING.MD }}>👤</Text>
+          <MaterialCommunityIcons name="account-outline" size={22} color={colors.textSecondary} style={{ marginRight: LAYOUT.SPACING.MD }} />
           <View style={{ flex: 1 }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               Editar perfil
             </Text>
           </View>
-          <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>›</Text>
+          <Text style={{ fontSize: 16, color: colors.textSecondary }}>›</Text>
         </TouchableOpacity>
 
         {/* Change Password */}
@@ -239,16 +243,16 @@ const ProfileScreen: React.FC = () => {
           }}
           onPress={handleChangePassword}
         >
-          <Text style={{ fontSize: 20, marginRight: LAYOUT.SPACING.MD }}>🔒</Text>
+          <MaterialCommunityIcons name="lock-outline" size={22} color={colors.textSecondary} style={{ marginRight: LAYOUT.SPACING.MD }} />
           <View style={{ flex: 1 }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
-              Cambiar contraseña
+              Cambiar Contraseña
             </Text>
           </View>
-          <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>›</Text>
+          <Text style={{ fontSize: 16, color: colors.textSecondary }}>›</Text>
         </TouchableOpacity>
       </Card>
 
@@ -258,15 +262,43 @@ const ProfileScreen: React.FC = () => {
           paddingHorizontal: LAYOUT.SPACING.LG,
           paddingVertical: LAYOUT.SPACING.MD,
           borderBottomWidth: 1,
-          borderBottomColor: COLORS.border,
+          borderBottomColor: colors.border,
         }}>
           <Text style={{
             fontSize: TYPOGRAPHY.FONT_SIZE.MD,
             fontWeight: TYPOGRAPHY.FONT_WEIGHT.SEMIBOLD,
-            color: COLORS.text,
+            color: colors.text,
           }}>
             Configuración
           </Text>
+        </View>
+
+        {/* Dark Mode Toggle */}
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            paddingHorizontal: LAYOUT.SPACING.LG,
+            paddingVertical: LAYOUT.SPACING.MD,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border,
+          }}
+        >
+          <MaterialCommunityIcons name={isDark ? "weather-night" : "white-balance-sunny"} size={22} color={colors.textSecondary} style={{ marginRight: LAYOUT.SPACING.MD }} />
+          <View style={{ flex: 1 }}>
+            <Text style={{
+              fontSize: TYPOGRAPHY.FONT_SIZE.MD,
+              color: colors.text,
+            }}>
+              Tema oscuro
+            </Text>
+          </View>
+          <Switch
+            value={isDark}
+            onValueChange={toggleTheme}
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={'#FFFFFF'}
+          />
         </View>
 
         {/* Settings */}
@@ -277,20 +309,20 @@ const ProfileScreen: React.FC = () => {
             paddingHorizontal: LAYOUT.SPACING.LG,
             paddingVertical: LAYOUT.SPACING.MD,
             borderBottomWidth: 1,
-            borderBottomColor: COLORS.border,
+            borderBottomColor: colors.border,
           }}
           onPress={handleSettings}
         >
-          <Text style={{ fontSize: 20, marginRight: LAYOUT.SPACING.MD }}>⚙️</Text>
+          <MaterialCommunityIcons name="cog-outline" size={22} color={colors.textSecondary} style={{ marginRight: LAYOUT.SPACING.MD }} />
           <View style={{ flex: 1 }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               Configuración
             </Text>
           </View>
-          <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>›</Text>
+          <Text style={{ fontSize: 16, color: colors.textSecondary }}>›</Text>
         </TouchableOpacity>
 
         {/* Help */}
@@ -301,20 +333,20 @@ const ProfileScreen: React.FC = () => {
             paddingHorizontal: LAYOUT.SPACING.LG,
             paddingVertical: LAYOUT.SPACING.MD,
             borderBottomWidth: 1,
-            borderBottomColor: COLORS.border,
+            borderBottomColor: colors.border,
           }}
           onPress={handleHelp}
         >
-          <Text style={{ fontSize: 20, marginRight: LAYOUT.SPACING.MD }}>❓</Text>
+          <MaterialCommunityIcons name="help-circle-outline" size={22} color={colors.textSecondary} style={{ marginRight: LAYOUT.SPACING.MD }} />
           <View style={{ flex: 1 }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               Ayuda y soporte
             </Text>
           </View>
-          <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>›</Text>
+          <Text style={{ fontSize: 16, color: colors.textSecondary }}>›</Text>
         </TouchableOpacity>
 
         {/* About */}
@@ -327,16 +359,16 @@ const ProfileScreen: React.FC = () => {
           }}
           onPress={handleAbout}
         >
-          <Text style={{ fontSize: 20, marginRight: LAYOUT.SPACING.MD }}>ℹ️</Text>
+          <MaterialCommunityIcons name="information-outline" size={22} color={colors.textSecondary} style={{ marginRight: LAYOUT.SPACING.MD }} />
           <View style={{ flex: 1 }}>
             <Text style={{
               fontSize: TYPOGRAPHY.FONT_SIZE.MD,
-              color: COLORS.text,
+              color: colors.text,
             }}>
               Acerca de
             </Text>
           </View>
-          <Text style={{ fontSize: 16, color: COLORS.textSecondary }}>›</Text>
+          <Text style={{ fontSize: 16, color: colors.textSecondary }}>›</Text>
         </TouchableOpacity>
       </Card>
 
@@ -347,7 +379,7 @@ const ProfileScreen: React.FC = () => {
       }}>
         <Text style={{
           fontSize: TYPOGRAPHY.FONT_SIZE.SM,
-          color: COLORS.textSecondary,
+          color: colors.textSecondary,
           textAlign: 'center',
         }}>
           Generador de Presupuestos{'\n'}
